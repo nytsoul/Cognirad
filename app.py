@@ -25,7 +25,10 @@ except ImportError as e:
     print(f"Warning: Deep learning dependencies not found ({e}). Running in MOCK mode.")
 
 app = Flask(__name__)
-CORS(app)  # Enable CORS for frontend
+
+# Configure CORS
+allowed_origins = os.environ.get('ALLOWED_ORIGINS', '*').split(',')
+CORS(app, origins=allowed_origins)  # Enable CORS for frontend
 
 # Configuration
 DEVICE = 'cuda' if (MODEL_AVAILABLE and torch.cuda.is_available()) else 'cpu'

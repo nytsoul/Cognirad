@@ -73,7 +73,8 @@ function App() {
     formData.append('indication', indication || "Chest X-ray");
 
     try {
-      const response = await axios.post('http://localhost:5001/api/predict', formData, {
+      const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:5001';
+      const response = await axios.post(`${apiUrl}/api/predict`, formData, {
         headers: { 'Content-Type': 'multipart/form-data' },
       });
       setReport(response.data);
