@@ -1,6 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import { Brain, FileText, ChevronRight, Github, Activity, CheckCircle, Upload, Shield, Database, Microscope } from 'lucide-react';
+import {
+  Brain, FileText, ChevronRight, Github, Activity, CheckCircle,
+  Upload, Shield, Database, Microscope, Clock, Heart, Zap, BarChart3,
+  Globe, Layers, Cpu, ScanEye, Sparkles, ArrowRight, Eye, Workflow,
+  MonitorCheck, Lock, BookOpen, Stethoscope
+} from 'lucide-react';
 import UploadZone from './components/UploadZone';
 import ReportDisplay from './components/ReportDisplay';
 import ImageViewer from './components/ImageViewer';
@@ -24,6 +29,10 @@ function App() {
   const [indication, setIndication] = useState('');
   const [imagePreview, setImagePreview] = useState(null);
   const [activeStage, setActiveStage] = useState(0);
+  const [analysisCount, setAnalysisCount] = useState(() => {
+    return parseInt(localStorage.getItem('cognirad_analysis_count') || '0', 10);
+  });
+  const [analysisTime, setAnalysisTime] = useState(null);
 
   useEffect(() => {
     // Add font from Google Fonts
@@ -50,6 +59,9 @@ function App() {
     if (!file) return;
 
     setIsLoading(true);
+    setAnalysisTime(null);
+    const startTime = Date.now();
+
     // Simulate cognitive steps for UI effect
     for (let i = 0; i < 3; i++) {
       setActiveStage(i);
@@ -66,6 +78,11 @@ function App() {
       });
       setReport(response.data);
       setActiveStage(3);
+      const elapsed = ((Date.now() - startTime) / 1000).toFixed(1);
+      setAnalysisTime(elapsed);
+      const newCount = analysisCount + 1;
+      setAnalysisCount(newCount);
+      localStorage.setItem('cognirad_analysis_count', String(newCount));
     } catch (error) {
       console.error("Error analyzing image:", error);
       alert("Failed to connect to CogniRad Backend.");
@@ -108,16 +125,28 @@ function App() {
             {report && <CognitivePipeline currentStage={activeStage} stages={COGNITIVE_STAGES} />}
           </div>
 
-          <div className="flex items-center gap-6">
-            <div className="hidden xl:flex flex-col items-end border-r border-white/10 pr-6 mr-2">
-              <span className="text-xs font-bold text-slate-400">Environment</span>
-              <span className="text-xs font-medium text-primary-400">Clinical v2.4-SaaS</span>
+          <div className="flex items-center gap-4">
+            <div className="hidden xl:flex items-center gap-3 border-r border-white/10 pr-5 mr-1">
+              <div className="flex flex-col items-end">
+                <span className="text-[10px] font-black text-slate-600 uppercase tracking-widest">Session</span>
+                <span className="text-xs font-bold text-primary-400 tabular-nums">{analysisCount} analyses</span>
+              </div>
+              {analysisTime && (
+                <div className="flex flex-col items-end">
+                  <span className="text-[10px] font-black text-slate-600 uppercase tracking-widest">Last Run</span>
+                  <span className="text-xs font-bold text-success tabular-nums">{analysisTime}s</span>
+                </div>
+              )}
             </div>
-            <button className="p-2.5 bg-white/5 hover:bg-white/10 rounded-full transition-colors border border-white/5">
-              <Database size={18} className="text-slate-400" />
+            <div className="hidden lg:flex items-center gap-1.5 px-3 py-1.5 bg-success/10 border border-success/20 rounded-full">
+              <div className="w-1.5 h-1.5 rounded-full bg-success animate-pulse" />
+              <span className="text-[10px] font-black text-success uppercase tracking-widest">Online</span>
+            </div>
+            <button className="p-2.5 bg-white/5 hover:bg-white/10 rounded-xl transition-colors border border-white/5">
+              <Database size={16} className="text-slate-400" />
             </button>
-            <a href="#" className="p-2.5 bg-white/5 hover:bg-white/10 rounded-full transition-colors border border-white/5">
-              <Github size={18} className="text-slate-400" />
+            <a href="https://github.com" target="_blank" rel="noreferrer" className="p-2.5 bg-white/5 hover:bg-white/10 rounded-xl transition-colors border border-white/5">
+              <Github size={16} className="text-slate-400" />
             </a>
           </div>
         </div>
@@ -129,55 +158,387 @@ function App() {
           {!report && !isLoading ? (
             <motion.div
               key="landing"
-              initial={{ opacity: 0, y: 30 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, scale: 0.95 }}
-              className="flex flex-col items-center justify-center min-h-[70vh] text-center"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0, scale: 0.97 }}
+              className="relative"
             >
-              <div className="p-4 rounded-3xl bg-primary-500/10 border border-primary-500/20 mb-8 backdrop-blur-sm">
-                <Microscope size={48} className="text-primary-500" />
-              </div>
-              <h2 className="text-7xl font-black tracking-tighter mb-6 bg-clip-text text-transparent bg-gradient-to-b from-white to-slate-500">
-                The Future of <br /> Cognitive Radiology.
-              </h2>
-              <p className="text-xl text-slate-400 max-w-2xl leading-relaxed mb-12">
-                Upload high-resolution DICOM or radiograph images to activate the multi-stage neural perception and triangular reasoning pipeline.
-              </p>
+              {/* ═══════ HERO SECTION ═══════ */}
+              <section className="relative min-h-[88vh] flex items-center overflow-hidden -mx-6 px-6">
+                {/* Animated background grid */}
+                <div className="absolute inset-0 -z-10 pointer-events-none overflow-hidden">
+                  <div className="absolute inset-0 opacity-[0.03]"
+                    style={{ backgroundImage: 'radial-gradient(#0ea5e9 1px, transparent 1px)', backgroundSize: '40px 40px' }} />
+                  <motion.div
+                    animate={{ rotate: 360 }}
+                    transition={{ duration: 120, repeat: Infinity, ease: 'linear' }}
+                    className="absolute -top-[40%] -right-[20%] w-[800px] h-[800px] rounded-full border border-primary-500/5"
+                  />
+                  <motion.div
+                    animate={{ rotate: -360 }}
+                    transition={{ duration: 180, repeat: Infinity, ease: 'linear' }}
+                    className="absolute -bottom-[30%] -left-[15%] w-[600px] h-[600px] rounded-full border border-primary-500/[0.03]"
+                  />
+                  <div className="absolute top-1/4 right-1/4 w-96 h-96 bg-primary-500/[0.04] rounded-full blur-[120px]" />
+                  <div className="absolute bottom-1/3 left-1/4 w-72 h-72 bg-primary-600/[0.03] rounded-full blur-[100px]" />
+                </div>
 
-              <div className="w-full max-w-xl space-y-6">
-                <UploadZone onFileSelect={handleFileSelect} isProcessing={isLoading} />
+                <div className="w-full grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-20 items-center max-w-[1700px] mx-auto py-12">
 
-                <AnimatePresence>
-                  {file && (
+                  {/* Left: Hero Text */}
+                  <div className="space-y-8">
                     <motion.div
-                      initial={{ opacity: 0, y: 10 }}
+                      initial={{ opacity: 0, y: 20 }}
                       animate={{ opacity: 1, y: 0 }}
-                      exit={{ opacity: 0, y: 10 }}
-                      className="flex justify-center"
+                      transition={{ delay: 0.1 }}
+                      className="inline-flex items-center gap-2.5 px-4 py-2 bg-primary-500/10 border border-primary-500/20 rounded-full"
                     >
-                      <button
-                        onClick={generateReport}
-                        disabled={isLoading}
-                        className="group relative px-12 py-4 bg-primary-600 text-white rounded-2xl text-lg font-black hover:bg-primary-500 transition-all shadow-glow flex items-center gap-4 overflow-hidden"
+                      <div className="w-2 h-2 rounded-full bg-primary-500 animate-pulse shadow-glow" />
+                      <span className="text-[11px] font-black text-primary-400 uppercase tracking-[0.15em]">Next-Gen Diagnostic AI</span>
+                    </motion.div>
+
+                    <motion.h2
+                      initial={{ opacity: 0, y: 20 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ delay: 0.2 }}
+                      className="text-5xl md:text-6xl xl:text-7xl font-black tracking-tighter leading-[0.95]"
+                    >
+                      <span className="bg-clip-text text-transparent bg-gradient-to-b from-white via-white to-slate-400">
+                        Cognitive
+                      </span>
+                      <br />
+                      <span className="bg-clip-text text-transparent bg-gradient-to-b from-white via-slate-200 to-slate-500">
+                        Radiology
+                      </span>
+                      <br />
+                      <span className="bg-clip-text text-transparent bg-gradient-to-r from-primary-400 to-primary-600">
+                        Reimagined.
+                      </span>
+                    </motion.h2>
+
+                    <motion.p
+                      initial={{ opacity: 0, y: 20 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ delay: 0.3 }}
+                      className="text-lg text-slate-400 max-w-lg leading-relaxed"
+                    >
+                      Three-stage neural pipeline that perceives, classifies, and reasons — generating comprehensive radiology reports with explainable AI evidence.
+                    </motion.p>
+
+                    {/* Stats row */}
+                    <motion.div
+                      initial={{ opacity: 0, y: 20 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ delay: 0.4 }}
+                      className="flex gap-8"
+                    >
+                      {[
+                        { value: '14', label: 'Pathology\nClasses' },
+                        { value: '3-Stage', label: 'Cognitive\nPipeline' },
+                        { value: '<8s', label: 'Inference\nTime' },
+                      ].map((stat, i) => (
+                        <div key={i} className="text-center">
+                          <div className="text-2xl font-black text-white">{stat.value}</div>
+                          <div className="text-[9px] font-bold text-slate-600 uppercase tracking-widest whitespace-pre-line mt-1">{stat.label}</div>
+                        </div>
+                      ))}
+                    </motion.div>
+
+                    {/* CTA Buttons */}
+                    <motion.div
+                      initial={{ opacity: 0, y: 20 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ delay: 0.5 }}
+                      className="flex flex-wrap gap-4 pt-2"
+                    >
+                      <a
+                        href="#upload-section"
+                        className="group relative px-8 py-4 bg-primary-600 text-white rounded-2xl text-sm font-black hover:bg-primary-500 transition-all shadow-glow flex items-center gap-3 overflow-hidden"
                       >
                         <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-1000" />
-                        {isLoading ? <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" /> : <Microscope size={24} />}
-                        {isLoading ? "Analyzing Neural Pathways..." : "Process Case Data"}
-                        <ChevronRight size={20} className="group-hover:translate-x-1 transition-transform" />
-                      </button>
+                        <ScanEye size={18} />
+                        Start Analysis
+                        <ArrowRight size={16} className="group-hover:translate-x-1 transition-transform" />
+                      </a>
+                      <a
+                        href="#how-it-works"
+                        className="px-8 py-4 bg-white/5 text-slate-300 rounded-2xl text-sm font-bold hover:bg-white/10 transition-all border border-white/10 flex items-center gap-3"
+                      >
+                        <BookOpen size={16} />
+                        How It Works
+                      </a>
                     </motion.div>
-                  )}
-                </AnimatePresence>
-              </div>
-
-              <div className="mt-20 grid grid-cols-2 lg:grid-cols-4 gap-8 w-full max-w-5xl opacity-40">
-                {COGNITIVE_STAGES.map(s => (
-                  <div key={s.id} className="flex flex-col items-center p-6 border border-white/5 rounded-2xl bg-white/5">
-                    <s.icon size={24} className="mb-3" />
-                    <span className="text-[10px] font-black uppercase tracking-widest">{s.id}</span>
                   </div>
-                ))}
-              </div>
+
+                  {/* Right: Architecture Visualization */}
+                  <motion.div
+                    initial={{ opacity: 0, x: 40 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    transition={{ delay: 0.4, duration: 0.6 }}
+                    className="relative hidden lg:block"
+                  >
+                    <div className="relative">
+                      {/* Glow behind card */}
+                      <div className="absolute -inset-8 bg-primary-500/[0.06] blur-3xl rounded-full" />
+
+                      {/* Main architecture card */}
+                      <div className="relative bg-surface/80 backdrop-blur-xl border border-white/10 rounded-3xl p-8 shadow-glass overflow-hidden">
+                        <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-primary-500/40 to-transparent" />
+
+                        <div className="flex items-center justify-between mb-8">
+                          <div className="flex items-center gap-3">
+                            <div className="p-2 bg-primary-500/10 rounded-lg">
+                              <Workflow size={16} className="text-primary-400" />
+                            </div>
+                            <span className="text-[10px] font-black text-slate-500 uppercase tracking-widest">Architecture Pipeline</span>
+                          </div>
+                          <div className="flex gap-1.5">
+                            <div className="w-2.5 h-2.5 rounded-full bg-danger/60" />
+                            <div className="w-2.5 h-2.5 rounded-full bg-accent/60" />
+                            <div className="w-2.5 h-2.5 rounded-full bg-success/60" />
+                          </div>
+                        </div>
+
+                        {/* Pipeline steps */}
+                        <div className="space-y-4">
+                          {[
+                            { icon: Eye, name: 'PRO-FA Encoder', desc: 'Pixel → Region → Organ alignment', color: 'primary', tag: 'PERCEPTION' },
+                            { icon: Cpu, name: 'MIX-MLP Classifier', desc: 'Multi-path disease co-occurrence', color: 'accent', tag: 'DIAGNOSIS' },
+                            { icon: Brain, name: 'RCTA Decoder', desc: 'Closed-loop triangular reasoning', color: 'success', tag: 'REASONING' },
+                          ].map((step, i) => (
+                            <motion.div
+                              key={step.name}
+                              initial={{ opacity: 0, x: 20 }}
+                              animate={{ opacity: 1, x: 0 }}
+                              transition={{ delay: 0.6 + i * 0.15 }}
+                              className="group flex items-center gap-4 p-4 rounded-2xl bg-background/60 border border-white/5 hover:border-primary-500/20 transition-all duration-300"
+                            >
+                              <div className={clsx(
+                                "p-3 rounded-xl shrink-0 transition-colors duration-300",
+                                step.color === 'primary' && "bg-primary-500/10 group-hover:bg-primary-500/20",
+                                step.color === 'accent' && "bg-accent/10 group-hover:bg-accent/20",
+                                step.color === 'success' && "bg-success/10 group-hover:bg-success/20",
+                              )}>
+                                <step.icon size={20} className={clsx(
+                                  step.color === 'primary' && "text-primary-400",
+                                  step.color === 'accent' && "text-accent",
+                                  step.color === 'success' && "text-success",
+                                )} />
+                              </div>
+                              <div className="flex-1 min-w-0">
+                                <div className="flex items-center gap-2">
+                                  <span className="text-sm font-bold text-white">{step.name}</span>
+                                  <span className={clsx(
+                                    "text-[8px] font-black px-2 py-0.5 rounded-full uppercase tracking-widest",
+                                    step.color === 'primary' && "bg-primary-500/10 text-primary-400",
+                                    step.color === 'accent' && "bg-accent/10 text-accent",
+                                    step.color === 'success' && "bg-success/10 text-success",
+                                  )}>{step.tag}</span>
+                                </div>
+                                <p className="text-[11px] text-slate-500 mt-0.5 font-medium">{step.desc}</p>
+                              </div>
+                              <ChevronRight size={14} className="text-slate-700 group-hover:text-slate-400 transition-colors shrink-0" />
+                            </motion.div>
+                          ))}
+                        </div>
+
+                        {/* Output area */}
+                        <motion.div
+                          initial={{ opacity: 0 }}
+                          animate={{ opacity: 1 }}
+                          transition={{ delay: 1.1 }}
+                          className="mt-6 p-4 rounded-2xl bg-gradient-to-r from-primary-500/5 to-success/5 border border-primary-500/10"
+                        >
+                          <div className="flex items-center gap-3">
+                            <div className="p-2 bg-white/5 rounded-lg">
+                              <FileText size={16} className="text-primary-300" />
+                            </div>
+                            <div>
+                              <span className="text-xs font-bold text-white">Structured Report Output</span>
+                              <div className="flex items-center gap-2 mt-0.5">
+                                <span className="text-[9px] text-slate-500 font-medium">Findings + Impression + Evidence Maps</span>
+                                <div className="flex items-center gap-1">
+                                  <div className="w-1 h-1 rounded-full bg-success animate-pulse" />
+                                  <span className="text-[8px] font-black text-success uppercase">Ready</span>
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                        </motion.div>
+                      </div>
+                    </div>
+                  </motion.div>
+                </div>
+              </section>
+
+              {/* ═══════ HOW IT WORKS ═══════ */}
+              <section id="how-it-works" className="py-20 -mx-6 px-6">
+                <motion.div
+                  initial={{ opacity: 0, y: 30 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true, margin: "-100px" }}
+                  className="text-center mb-16"
+                >
+                  <span className="text-[10px] font-black text-primary-500 uppercase tracking-[0.2em]">Three-Stage Pipeline</span>
+                  <h3 className="text-4xl font-black text-white mt-3 tracking-tight">How CogniRad++ Works</h3>
+                  <p className="text-slate-500 mt-3 max-w-lg mx-auto text-sm leading-relaxed">
+                    A cognitive reasoning loop inspired by how expert radiologists perceive, diagnose, and verify their findings.
+                  </p>
+                </motion.div>
+
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-5xl mx-auto relative">
+                  {/* Connection lines */}
+                  <div className="hidden md:block absolute top-1/2 left-0 right-0 h-px -translate-y-1/2 z-0">
+                    <div className="mx-[16%] h-px bg-gradient-to-r from-primary-500/20 via-accent/20 to-success/20" />
+                  </div>
+
+                  {[
+                    {
+                      icon: Eye, step: '01', name: 'PRO-FA',
+                      title: 'Hierarchical Perception',
+                      desc: 'Extracts pixel, region, and organ-level features using factored attention. Aligns visual concepts across multiple scales to capture both local pathology markers and global anatomical context.',
+                      color: 'primary'
+                    },
+                    {
+                      icon: Layers, step: '02', name: 'MIX-MLP',
+                      title: 'Disease Classification',
+                      desc: 'A multi-path architecture combining residual, expansion, and compressed pathways. Models disease co-occurrence patterns to predict 14 CheXpert pathologies with calibrated confidence.',
+                      color: 'accent'
+                    },
+                    {
+                      icon: Brain, step: '03', name: 'RCTA',
+                      title: 'Triangular Reasoning',
+                      desc: 'Closed-loop decoder: Image queries Text, Context queries Diagnosis, Diagnosis queries Image. This triangular attention verifies findings before generating the final clinical report.',
+                      color: 'success'
+                    },
+                  ].map((item, i) => (
+                    <motion.div
+                      key={item.name}
+                      initial={{ opacity: 0, y: 30 }}
+                      whileInView={{ opacity: 1, y: 0 }}
+                      viewport={{ once: true, margin: "-50px" }}
+                      transition={{ delay: i * 0.15 }}
+                      className="relative z-10 group"
+                    >
+                      <div className="h-full p-8 rounded-3xl bg-surface border border-white/5 hover:border-primary-500/20 transition-all duration-500 hover:shadow-glow/20">
+                        <div className="flex items-center justify-between mb-6">
+                          <div className={clsx(
+                            "p-3.5 rounded-2xl transition-colors duration-300",
+                            item.color === 'primary' && "bg-primary-500/10 group-hover:bg-primary-500/15",
+                            item.color === 'accent' && "bg-accent/10 group-hover:bg-accent/15",
+                            item.color === 'success' && "bg-success/10 group-hover:bg-success/15",
+                          )}>
+                            <item.icon size={24} className={clsx(
+                              item.color === 'primary' && "text-primary-400",
+                              item.color === 'accent' && "text-accent",
+                              item.color === 'success' && "text-success",
+                            )} />
+                          </div>
+                          <span className="text-5xl font-black text-white/[0.04] select-none">{item.step}</span>
+                        </div>
+
+                        <div className="flex items-center gap-2 mb-2">
+                          <span className={clsx(
+                            "text-[9px] font-black px-2.5 py-1 rounded-lg uppercase tracking-widest",
+                            item.color === 'primary' && "bg-primary-500/10 text-primary-400",
+                            item.color === 'accent' && "bg-accent/10 text-accent",
+                            item.color === 'success' && "bg-success/10 text-success",
+                          )}>{item.name}</span>
+                        </div>
+
+                        <h4 className="text-lg font-bold text-white mb-3">{item.title}</h4>
+                        <p className="text-[13px] text-slate-500 leading-relaxed">{item.desc}</p>
+                      </div>
+                    </motion.div>
+                  ))}
+                </div>
+              </section>
+
+              {/* ═══════ FEATURES STRIP ═══════ */}
+              <section className="py-12 -mx-6 px-6 border-y border-white/5 bg-white/[0.01]">
+                <div className="max-w-6xl mx-auto grid grid-cols-2 md:grid-cols-4 gap-8">
+                  {[
+                    { icon: Shield, label: 'HIPAA Compliant', desc: 'Privacy-first architecture', color: 'text-primary-400' },
+                    { icon: Zap, label: 'Real-time Inference', desc: 'Optimized CPU & GPU', color: 'text-accent' },
+                    { icon: MonitorCheck, label: 'Explainable AI', desc: 'Evidence-backed reports', color: 'text-success' },
+                    { icon: Lock, label: 'Clinician Override', desc: 'Human-in-the-loop', color: 'text-primary-300' },
+                  ].map((feat, i) => (
+                    <motion.div
+                      key={feat.label}
+                      initial={{ opacity: 0, y: 15 }}
+                      whileInView={{ opacity: 1, y: 0 }}
+                      viewport={{ once: true }}
+                      transition={{ delay: i * 0.08 }}
+                      className="flex items-start gap-4 group"
+                    >
+                      <div className="p-2.5 bg-white/5 rounded-xl border border-white/5 group-hover:border-primary-500/20 transition-colors shrink-0">
+                        <feat.icon size={18} className={feat.color} />
+                      </div>
+                      <div>
+                        <span className="text-xs font-bold text-white">{feat.label}</span>
+                        <p className="text-[11px] text-slate-600 mt-0.5 font-medium">{feat.desc}</p>
+                      </div>
+                    </motion.div>
+                  ))}
+                </div>
+              </section>
+
+              {/* ═══════ UPLOAD SECTION ═══════ */}
+              <section id="upload-section" className="py-20">
+                <motion.div
+                  initial={{ opacity: 0, y: 30 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true, margin: "-100px" }}
+                  className="text-center mb-10"
+                >
+                  <span className="text-[10px] font-black text-primary-500 uppercase tracking-[0.2em]">Get Started</span>
+                  <h3 className="text-4xl font-black text-white mt-3 tracking-tight">Analyze a Radiograph</h3>
+                  <p className="text-slate-500 mt-3 max-w-md mx-auto text-sm leading-relaxed">
+                    Upload a chest X-ray image to run the full cognitive reasoning pipeline and generate an automated report.
+                  </p>
+                </motion.div>
+
+                <motion.div
+                  initial={{ opacity: 0, y: 20 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }}
+                  className="max-w-xl mx-auto space-y-6"
+                >
+                  <UploadZone onFileSelect={handleFileSelect} isProcessing={isLoading} />
+
+                  <AnimatePresence>
+                    {file && (
+                      <motion.div
+                        initial={{ opacity: 0, y: 10 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        exit={{ opacity: 0, y: 10 }}
+                        className="flex flex-col items-center gap-4"
+                      >
+                        <div className="w-full max-w-md">
+                          <label className="block text-[10px] font-black text-slate-600 uppercase tracking-widest mb-2">Clinical Indication (optional)</label>
+                          <input
+                            type="text"
+                            className="w-full px-4 py-3 bg-surface border border-border rounded-xl focus:ring-2 focus:ring-primary-500 focus:border-transparent text-sm transition-all placeholder:text-slate-700"
+                            placeholder="e.g. 55M with chest pain and shortness of breath"
+                            value={indication}
+                            onChange={(e) => setIndication(e.target.value)}
+                          />
+                        </div>
+                        <button
+                          onClick={generateReport}
+                          disabled={isLoading}
+                          className="group relative px-12 py-4 bg-primary-600 text-white rounded-2xl text-lg font-black hover:bg-primary-500 transition-all shadow-glow flex items-center gap-4 overflow-hidden"
+                        >
+                          <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-1000" />
+                          {isLoading ? <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" /> : <Microscope size={22} />}
+                          {isLoading ? "Analyzing Neural Pathways..." : "Run Cognitive Analysis"}
+                          <ChevronRight size={18} className="group-hover:translate-x-1 transition-transform" />
+                        </button>
+                      </motion.div>
+                    )}
+                  </AnimatePresence>
+                </motion.div>
+              </section>
             </motion.div>
           ) : (
             <motion.div
@@ -303,6 +664,30 @@ function App() {
         </AnimatePresence>
 
       </main>
+
+      {/* Footer */}
+      <footer className="mt-16 border-t border-white/5 bg-surface/30">
+        <div className="max-w-[1700px] mx-auto px-6 py-8">
+          <div className="flex flex-col md:flex-row items-center justify-between gap-4">
+            <div className="flex items-center gap-3">
+              <Brain size={18} className="text-primary-500/50" />
+              <span className="text-xs font-bold text-slate-600">
+                CogniRad<span className="text-primary-500/60">++</span> v1.0 — Knowledge-Grounded Cognitive Radiology
+              </span>
+            </div>
+            <div className="flex items-center gap-6 text-[10px] font-bold text-slate-700 uppercase tracking-widest">
+              <span className="flex items-center gap-1.5"><Heart size={10} className="text-danger/40" /> Built for Clinicians</span>
+              <span className="flex items-center gap-1.5"><Shield size={10} className="text-primary-500/40" /> AI-Assisted Only</span>
+              <span className="flex items-center gap-1.5"><Clock size={10} className="text-slate-600" /> {new Date().getFullYear()}</span>
+            </div>
+          </div>
+          <div className="mt-4 text-center">
+            <p className="text-[10px] text-slate-700 leading-relaxed max-w-2xl mx-auto">
+              Disclaimer: CogniRad++ is an AI-assisted diagnostic tool. All reports must be reviewed and validated by a qualified radiologist before clinical use.
+            </p>
+          </div>
+        </div>
+      </footer>
     </div>
   );
 }

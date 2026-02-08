@@ -6,6 +6,10 @@
   body {
     @apply bg-background text-slate-100 antialiased font-sans;
   }
+
+  ::selection {
+    @apply bg-primary-500/30 text-white;
+  }
 }
 
 @layer components {
@@ -38,17 +42,29 @@
 
 /* Animations */
 @keyframes pulse-slow {
-
-  0%,
-  100% {
-    opacity: 0.8;
-  }
-
-  50% {
-    opacity: 0.4;
-  }
+  0%, 100% { opacity: 0.8; }
+  50% { opacity: 0.4; }
 }
 
 .animate-pulse-slow {
   animation: pulse-slow 4s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+@keyframes shimmer {
+  0% { transform: translateX(-100%); }
+  100% { transform: translateX(100%); }
+}
+
+.animate-shimmer {
+  animation: shimmer 2s ease-in-out infinite;
+}
+
+/* Smooth page transitions */
+* {
+  scroll-behavior: smooth;
+}
+
+/* Focus styles for a11y */
+:focus-visible {
+  @apply outline-2 outline-offset-2 outline-primary-500 rounded;
 }
