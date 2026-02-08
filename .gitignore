@@ -1,0 +1,98 @@
+# .gitignore for CogniRad++
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+
+# Virtual Environment
+venv/
+ENV/
+env/
+
+# Jupyter Notebook
+.ipynb_checkpoints
+*.ipynb_checkpoints
+
+# PyTorch
+*.pth
+*.pt
+*.ckpt
+
+# Data
+data/mimic-cxr/
+data/iu-xray/
+data/preprocessed/
+data/examples/
+*.csv
+*.json
+*.h5
+*.hdf5
+
+# Checkpoints
+checkpoints/
+*.pth
+*.pt
+
+# Logs
+logs/
+*.log
+wandb/
+tensorboard/
+
+# Outputs
+outputs/
+evaluation_results/
+predictions/
+
+# IDEs
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Docker
+*.tar
+
+# Secrets
+.env
+*.key
+credentials.json
+config.ini
+
+# Temporary files
+tmp/
+temp/
+*.tmp
+
+# Large files
+*.zip
+*.tar.gz
+*.tgz
+
+# Model files (too large for git)
+*.model
+*.bin
+*.safetensors

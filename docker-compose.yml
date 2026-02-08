@@ -1,0 +1,49 @@
+version: '3.8'
+
+services:
+  cognirad:
+    build: .
+    image: cognirad-plusplus:latest
+    container_name: cognirad_app
+    
+    # GPU support
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: all
+              capabilities: [gpu]
+    
+    # Ports
+    ports:
+      - "8888:8888"  # Jupyter
+      - "5000:5000"  # Flask API
+    
+    # Volumes
+    volumes:
+      - ./data:/workspace/data
+      - ./checkpoints:/workspace/checkpoints
+      - ./outputs:/workspace/outputs
+      - ./notebooks:/workspace/notebooks
+    
+    # Environment variables
+    environment:
+      - CUDA_VISIBLE_DEVICES=0
+      - WANDB_API_KEY=${WANDB_API_KEY}
+    
+    # Command
+    command: jupyter notebook --ip=0.0.0.0 --port=8888 --no-browser --allow-root
+    
+    # Restart policy
+    restart: unless-stopped
+
+  # Optional: TensorBoard for monitoring
+  tensorboard:
+    image: tensorflow/tensorflow:latest
+    container_name: cognirad_tensorboard
+    ports:
+      - "6006:6006"
+    volumes:
+      - ./logs:/logs
+    command: tensorboard --logdir=/logs --host=0.0.0.0
