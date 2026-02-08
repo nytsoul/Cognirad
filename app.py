@@ -181,17 +181,29 @@ def predict():
                 include_evidence=True
             )
         
+        # Helper to convert tensors to JSON-serializable types
+        def tensor_to_serializable(obj):
+            if isinstance(obj, torch.Tensor):
+                return obj.detach().cpu().tolist()
+            elif isinstance(obj, dict):
+                return {k: tensor_to_serializable(v) for k, v in obj.items()}
+            elif isinstance(obj, (list, tuple)):
+                return [tensor_to_serializable(item) for item in obj]
+            elif isinstance(obj, np.ndarray):
+                return obj.tolist()
+            return obj
+
         # Format response
         response = {
             'findings': report['findings'],
             'impression': report['impression'],
-            'predicted_diseases': report['predicted_diseases'],
-            'uncertain_findings': report['uncertain_findings'],
+            'predicted_diseases': tensor_to_serializable(report['predicted_diseases']),
+            'uncertain_findings': tensor_to_serializable(report['uncertain_findings']),
             'clinical_indication': report['clinical_indication'],
             'warnings': report.get('warnings', []),
-            'perception_layers': report.get('perception_layers', []),
-            'reasoning_steps': report.get('reasoning_steps', []),
-            'attention_maps': report.get('attention_maps', {}),
+            'perception_layers': tensor_to_serializable(report.get('perception_layers', [])),
+            'reasoning_steps': tensor_to_serializable(report.get('reasoning_steps', [])),
+            'attention_maps': tensor_to_serializable(report.get('attention_maps', {})),
             'mock_mode': USE_MOCK
         }
         
@@ -222,7 +234,7 @@ def model_info():
 
 
 if __name__ == '__main__':
-    port = int(os.environ.get('PORT', 5000))
+    port = int(os.environ.get('PORT', 5001))
     debug = os.environ.get('DEBUG', 'true').lower() == 'true'
     
     print(f"\n{'='*60}")

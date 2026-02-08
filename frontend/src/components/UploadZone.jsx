@@ -116,10 +116,10 @@ const UploadZone = ({ onFileSelect, isProcessing }) => {
                                 <X size={20} />
                             </button>
                         </div>
-                        <p className="mt-6 text-[10px] uppercase font-black tracking-[0.2em] text-primary-400 flex items-center gap-3">
+                        <div className="mt-6 text-[10px] uppercase font-black tracking-[0.2em] text-primary-400 flex items-center gap-3">
                             <div className="w-1.5 h-1.5 rounded-full bg-primary-500 animate-pulse shadow-glow" />
                             Visual Data Locked
-                        </p>
+                        </div>
                     </div>
                 ) : (
                     <label htmlFor="file-upload" className="flex flex-col items-center cursor-pointer w-full h-full justify-center p-4">
