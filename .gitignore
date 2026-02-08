@@ -24,8 +24,13 @@ wheels/
 
 # Virtual Environment
 venv/
+.venv/
 ENV/
 env/
+
+# Node
+node_modules/
+frontend/node_modules/
 
 # Jupyter Notebook
 .ipynb_checkpoints
