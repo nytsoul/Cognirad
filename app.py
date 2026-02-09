@@ -5,8 +5,6 @@ Serves the radiology report generation model via REST API
 
 import os
 import io
-import os
-import io
 import numpy as np
 from flask import Flask, request, jsonify
 from flask_cors import CORS
