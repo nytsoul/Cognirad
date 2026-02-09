@@ -2,7 +2,7 @@ version: '3.8'
 
 services:
   cognirad:
-    build: .
+    build: ./backend
     image: cognirad-plusplus:latest
     container_name: cognirad_app
     
@@ -22,10 +22,10 @@ services:
     
     # Volumes
     volumes:
-      - ./data:/workspace/data
-      - ./checkpoints:/workspace/checkpoints
-      - ./outputs:/workspace/outputs
-      - ./notebooks:/workspace/notebooks
+      - ./backend/data:/workspace/data
+      - ./backend/checkpoints:/workspace/checkpoints
+      - ./backend/outputs:/workspace/outputs
+      - ./backend/notebooks:/workspace/notebooks
     
     # Environment variables
     environment:
