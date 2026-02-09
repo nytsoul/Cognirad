@@ -91,21 +91,32 @@ def load_model():
     """Load the CogniRad++ model or return mock"""
     global USE_MOCK
     
-    if USE_MOCK:
-        print("Using mock model")
+    # Force real model if requested
+    if os.environ.get('USE_MOCK', 'false').lower() == 'true':
+        print("Using mock model (forced via ENV)")
         return MockModel()
     
     try:
+        print("Initializing CogniRad++ model architecture...")
+        # Initialize model structure first
+        model = CogniRadPlusPlus(
+            visual_backbone='resnet50',
+            num_diseases=14,
+            pretrained=True  # Load ImageNet weights for encoder
+        )
+        
         if os.path.exists(CHECKPOINT_PATH):
-            print(f"Loading model from {CHECKPOINT_PATH}")
-            model = CogniRadPlusPlus.from_pretrained(CHECKPOINT_PATH)
+            print(f"Loading checkpoint from {CHECKPOINT_PATH}")
+            checkpoint = torch.load(CHECKPOINT_PATH, map_location=DEVICE)
+            # Handle different checkpoint formats
+            if isinstance(checkpoint, dict) and 'state_dict' in checkpoint:
+                model.load_state_dict(checkpoint['state_dict'], strict=False)
+            else:
+                model.load_state_dict(checkpoint, strict=False)
+            print("Checkpoint loaded successfully")
         else:
-            print("No checkpoint found, initializing new model")
-            model = CogniRadPlusPlus(
-                visual_backbone='resnet50',
-                num_diseases=14,
-                pretrained=True
-            )
+            print("No checkpoint found at path. Using ImageNet pretrained backbone (untrained decoder).")
+            print("Warning: Generated reports will be random/gibberish until trained.")
         
         model = model.to(DEVICE)
         model.eval()
@@ -114,7 +125,9 @@ def load_model():
     
     except Exception as e:
         print(f"Error loading model: {e}")
-        print("Falling back to mock model")
+        import traceback
+        traceback.print_exc()
+        print("Falling back to mock model due to error")
         USE_MOCK = True
         return MockModel()
 
