@@ -546,30 +546,21 @@ function App() {
               key="dashboard"
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
-              className="grid grid-cols-1 xl:grid-cols-12 gap-8 items-start"
+              className="grid grid-cols-1 xl:grid-cols-12 gap-6 items-start"
             >
-              {/* Left Pane: Perception & Evidence */}
-              <div className="xl:col-span-5 space-y-6 lg:sticky lg:top-28">
-                <div className="card-premium p-1 relative overflow-hidden group">
-                  <ImageViewer
-                    imageUrl={imagePreview}
-                    isLoading={isLoading}
-                    perceptionLayers={report?.perception_layers}
-                    attentionMap={report?.attention_maps?.lungs}
-                  />
-                </div>
-
+              {/* ─── COLUMN 1: CLINICAL WORKLOAD (LEFT) ─── */}
+              <div className="xl:col-span-3 space-y-6 lg:sticky lg:top-28">
                 <div className="card-premium p-6">
                   <h3 className="text-xs uppercase tracking-[0.2em] font-black text-slate-500 mb-6 flex items-center gap-3">
                     <Activity size={16} className="text-primary-500" />
-                    02. Clinical Workload
+                    01. Clinical Context
                   </h3>
 
                   <div className="space-y-4">
                     <div>
                       <label className="block text-[10px] font-black text-slate-600 uppercase tracking-widest mb-3">Patient Presentation</label>
                       <textarea
-                        className="w-full px-5 py-4 bg-background border border-border rounded-xl focus:ring-2 focus:ring-primary-500 focus:border-transparent text-sm h-32 resize-none transition-all placeholder:text-slate-700"
+                        className="w-full px-5 py-4 bg-background border border-border rounded-xl focus:ring-2 focus:ring-primary-500 focus:border-transparent text-sm h-32 resize-none transition-all placeholder:text-slate-700 font-medium"
                         placeholder="Enter clinical indication, symptoms, and history..."
                         value={indication}
                         onChange={(e) => setIndication(e.target.value)}
@@ -577,24 +568,24 @@ function App() {
                       />
                     </div>
 
-                    <div className="flex gap-4">
-                      <button
-                        onClick={() => handleFileSelect(null)}
-                        className="px-6 py-3 bg-surface-lighter hover:bg-slate-800 text-slate-300 rounded-xl text-sm font-bold transition-all border border-white/5 flex-1"
-                        disabled={isLoading}
-                      >
-                        Drop Case
-                      </button>
+                    <div className="flex flex-col gap-3">
                       <button
                         onClick={generateReport}
                         disabled={isLoading}
                         className={clsx(
-                          "px-8 py-3 bg-primary-600 text-white rounded-xl text-sm font-black hover:bg-primary-500 transition-all shadow-glow flex-[2] flex items-center justify-center gap-3",
+                          "px-6 py-4 bg-primary-600 text-white rounded-xl text-xs font-black hover:bg-primary-500 transition-all shadow-glow flex items-center justify-center gap-3",
                           isLoading && "opacity-50 pointer-events-none"
                         )}
                       >
                         {isLoading ? <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" /> : <Microscope size={18} />}
-                        {isLoading ? "Running Pipeline..." : "Initiate Analysis"}
+                        {isLoading ? "Analyzing..." : "Update Analysis"}
+                      </button>
+                      <button
+                        onClick={() => handleFileSelect(null)}
+                        className="px-6 py-3 bg-white/5 hover:bg-white/10 text-slate-400 rounded-xl text-[10px] font-bold uppercase tracking-widest transition-all border border-white/5"
+                        disabled={isLoading}
+                      >
+                        Discard Case
                       </button>
                     </div>
                   </div>
@@ -611,54 +602,72 @@ function App() {
                 )}
               </div>
 
-              {/* Right Pane: Reasoning Engine & Reporting */}
-              <div className="xl:col-span-7 space-y-6">
-                <div className="grid grid-cols-1 gap-6">
-                  <div className="card-premium h-fit overflow-hidden">
-                    <div className="p-4 bg-white/5 border-b border-border flex items-center justify-between">
-                      <span className="text-[10px] font-black uppercase tracking-wider text-slate-500">Neural Reasoning Engine</span>
-                      <div className="flex items-center gap-1.5 text-[10px] text-primary-400 font-bold">
-                        <Shield size={12} />
-                        RCTA SECURE
-                      </div>
-                    </div>
-                    <ReasoningFlow activeStage={isLoading ? activeStage : 3} />
-                  </div>
-
-                  <AnimatePresence mode="wait">
-                    {isLoading && activeStage < 3 ? (
-                      <motion.div
-                        key="loading-state"
-                        initial={{ opacity: 0 }}
-                        animate={{ opacity: 1 }}
-                        exit={{ opacity: 0 }}
-                        className="card-premium p-16 flex flex-col items-center justify-center text-center min-h-[400px] relative overflow-hidden"
-                      >
-                        <div className="absolute inset-0 bg-primary-500/5 animate-pulse-slow pointer-events-none" />
-                        <div className="relative mb-8">
-                          <div className="w-20 h-20 border-3 border-primary-500/20 border-t-primary-500 rounded-full animate-spin" />
-                          <div className="absolute inset-0 flex items-center justify-center">
-                            <Brain size={24} className="text-primary-500" />
-                          </div>
-                        </div>
-                        <h4 className="text-2xl font-black text-white mb-3">
-                          {COGNITIVE_STAGES[activeStage].id} <span className="text-slate-500 tracking-normal font-medium">Stage Active</span>
-                        </h4>
-                        <p className="text-slate-400 max-w-sm leading-relaxed">
-                          {COGNITIVE_STAGES[activeStage].name} is processing visual features and clinical co-occurrence patterns.
-                        </p>
-                      </motion.div>
-                    ) : report ? (
-                      <motion.div
-                        key="report-state"
-                        initial={{ opacity: 0, y: 20 }}
-                        animate={{ opacity: 1, y: 0 }}
-                      >
-                        <ReportDisplay report={report} />
-                      </motion.div>
-                    ) : null}
-                  </AnimatePresence>
+              {/* ─── COLUMN 2: RADIOGRAPH & REASONING (CENTER) ─── */}
+              <div className="xl:col-span-5 space-y-6">
+                <div className="card-premium p-1 relative overflow-hidden group">
+                  <ImageViewer
+                    imageUrl={imagePreview}
+                    isLoading={isLoading}
+                    perceptionLayers={report?.perception_layers}
+                    attentionMap={report?.attention_maps?.lungs}
+                  />
                 </div>
+
+                <div className="card-premium h-fit overflow-hidden">
+                  <div className="p-4 bg-white/5 border-b border-border flex items-center justify-between">
+                    <span className="text-[10px] font-black uppercase tracking-wider text-slate-500">Neural Reasoning Engine</span>
+                    <div className="flex items-center gap-1.5 text-[10px] text-primary-400 font-bold">
+                      <Shield size={12} />
+                      RCTA SECURE
+                    </div>
+                  </div>
+                  <ReasoningFlow activeStage={isLoading ? activeStage : 3} />
+                </div>
+              </div>
+
+              {/* ─── COLUMN 3: SYNTHESIS & REPORT (RIGHT) ─── */}
+              <div className="xl:col-span-4">
+                <AnimatePresence mode="wait">
+                  {isLoading && activeStage < 3 ? (
+                    <motion.div
+                      key="loading-state"
+                      initial={{ opacity: 0, scale: 0.98 }}
+                      animate={{ opacity: 1, scale: 1 }}
+                      exit={{ opacity: 0, scale: 0.98 }}
+                      className="card-premium p-12 flex flex-col items-center justify-center text-center min-h-[500px] relative overflow-hidden"
+                    >
+                      <div className="absolute inset-0 bg-primary-500/5 animate-pulse-slow pointer-events-none" />
+                      <div className="relative mb-8">
+                        <div className="w-16 h-16 border-2 border-primary-500/20 border-t-primary-500 rounded-full animate-spin" />
+                        <div className="absolute inset-0 flex items-center justify-center">
+                          <Brain size={20} className="text-primary-500" />
+                        </div>
+                      </div>
+                      <h4 className="text-xl font-black text-white mb-2">
+                        {COGNITIVE_STAGES[activeStage].id} <span className="text-slate-500 tracking-normal font-medium text-sm">Processing</span>
+                      </h4>
+                      <p className="text-xs text-slate-500 max-w-[240px] leading-relaxed">
+                        {COGNITIVE_STAGES[activeStage].name} is active.
+                      </p>
+                    </motion.div>
+                  ) : report ? (
+                    <motion.div
+                      key="report-state"
+                      initial={{ opacity: 0, x: 20 }}
+                      animate={{ opacity: 1, x: 0 }}
+                    >
+                      <ReportDisplay report={report} />
+                    </motion.div>
+                  ) : (
+                    <div className="card-premium p-12 border-dashed border-slate-800 flex flex-col items-center justify-center text-center min-h-[500px]">
+                      <div className="p-4 bg-slate-900/50 rounded-2xl mb-4">
+                        <ScanEye size={32} className="text-slate-700" />
+                      </div>
+                      <h4 className="text-sm font-bold text-slate-600 uppercase tracking-widest">Awaiting Synthesis</h4>
+                      <p className="text-[10px] text-slate-700 mt-2 max-w-[200px]">Initialize the cognitive pipeline to generate a structured report.</p>
+                    </div>
+                  )}
+                </AnimatePresence>
               </div>
             </motion.div>
           )}

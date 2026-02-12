@@ -7,48 +7,79 @@ import {
     Sparkles, BarChart3, ShieldCheck, Clipboard
 } from 'lucide-react';
 
-/* ───────────── Probability Bar ───────────── */
-const ProbabilityBar = ({ label, probability, confidence, isUncertain, index }) => (
-    <motion.div
-        initial={{ opacity: 0, x: -10 }}
-        animate={{ opacity: 1, x: 0 }}
-        transition={{ delay: index * 0.06 }}
-        className="mb-4 last:mb-0 group"
-    >
-        <div className="flex justify-between items-end mb-1.5">
-            <span className={clsx(
-                "font-bold text-[11px] uppercase tracking-wider flex items-center gap-2",
-                isUncertain ? "text-accent" : "text-slate-400"
-            )}>
-                {isUncertain && <AlertTriangle size={10} className="text-accent" />}
-                {label}
-            </span>
-            <div className="flex items-center gap-2">
-                <span className="text-[9px] font-mono text-slate-600">
-                    conf {(confidence * 100).toFixed(0)}%
-                </span>
-                <span className="text-xs font-black text-white tabular-nums">
-                    {(probability * 100).toFixed(1)}%
-                </span>
+/* ───────────── Analysis Card ───────────── */
+const AnalysisCard = ({ label, probability, confidence, isUncertain, index }) => {
+    const getSeverity = (prob) => {
+        if (prob > 0.8) return {
+            color: "danger", label: "Critical", icon: AlertTriangle,
+            glow: "shadow-[0_2px_10px_#ef444410]"
+        };
+        if (prob > 0.5) return {
+            color: "accent", label: "Elevated", icon: Activity,
+            glow: "shadow-[0_2px_10px_#f59e0b10]"
+        };
+        if (prob > 0.2) return {
+            color: "primary", label: "Stable", icon: FileText,
+            glow: "shadow-[0_2px_10px_#0ea5e908]"
+        };
+        return {
+            color: "success", label: "Normal", icon: CheckCircle,
+            glow: "shadow-[0_2px_10px_#10b98108]"
+        };
+    };
+
+    const severity = getSeverity(probability);
+    const StatusIcon = severity.icon;
+
+    return (
+        <motion.div
+            initial={{ opacity: 0, scale: 0.95 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ delay: index * 0.05 }}
+            className={clsx(
+                "p-3 rounded-xl border transition-all duration-300 flex flex-col gap-2 group",
+                "bg-surface/40 hover:bg-surface/60 border-border hover:border-white/10",
+                severity.glow
+            )}
+        >
+            <div className="flex justify-between items-start">
+                <div className={clsx(
+                    "text-[8px] font-black uppercase tracking-widest flex items-center gap-1",
+                    severity.color === "danger" ? "text-danger" :
+                        severity.color === "accent" ? "text-accent" :
+                            severity.color === "primary" ? "text-primary-400" : "text-success"
+                )}>
+                    <StatusIcon size={9} />
+                    {severity.label}
+                </div>
+                <div className="text-sm font-black text-white tabular-nums">
+                    {(probability * 100).toFixed(0)}%
+                </div>
             </div>
-        </div>
-        <div className="h-2 w-full bg-slate-900/80 rounded-full overflow-hidden border border-white/5">
-            <motion.div
-                initial={{ width: 0 }}
-                animate={{ width: `${probability * 100}%` }}
-                transition={{ duration: 0.8, ease: "easeOut", delay: index * 0.06 }}
-                className={clsx(
-                    "h-full rounded-full",
-                    isUncertain
-                        ? "bg-gradient-to-r from-accent/80 to-accent shadow-[0_0_10px_#f59e0b40]"
-                        : probability > 0.8
-                            ? "bg-gradient-to-r from-danger/80 to-danger shadow-[0_0_10px_#ef444440]"
-                            : "bg-gradient-to-r from-primary-600 to-primary-400 shadow-glow"
-                )}
-            />
-        </div>
-    </motion.div>
-);
+
+            <h4 className="text-[10px] font-bold text-slate-200 truncate pr-2 uppercase tracking-wide">
+                {label}
+            </h4>
+
+            <div className="flex items-center gap-1.5 mt-1">
+                <div className="flex-1 h-1 bg-slate-900/60 rounded-full overflow-hidden">
+                    <motion.div
+                        initial={{ width: 0 }}
+                        animate={{ width: `${probability * 100}%` }}
+                        transition={{ duration: 0.8, delay: index * 0.05 }}
+                        className={clsx(
+                            "h-full rounded-full",
+                            severity.color === "danger" ? "bg-danger" :
+                                severity.color === "accent" ? "bg-accent" :
+                                    severity.color === "primary" ? "bg-primary-500" : "bg-success"
+                        )}
+                    />
+                </div>
+                {isUncertain && <div className="w-1 h-1 rounded-full bg-accent animate-pulse" title="Requires Review" />}
+            </div>
+        </motion.div>
+    );
+};
 
 /* ───────────── Report Section ───────────── */
 const ReportSection = ({ title, content, icon: Icon, accentColor = "primary" }) => (
@@ -304,23 +335,42 @@ const ReportDisplay = ({ report }) => {
                 <DownloadMenu report={report} />
             </div>
 
-            {/* ─── Stats Row ─── */}
-            <div className="px-6 py-4 border-b border-border bg-white/[0.015] grid grid-cols-2 md:grid-cols-4 gap-3">
-                <StatCard label="Pathologies" value={allPredictions.length} icon={BarChart3} color="primary" />
-                <StatCard label="High Risk" value={highRisk} icon={AlertTriangle} color={highRisk > 0 ? "danger" : "success"} />
-                <StatCard label="Uncertain" value={uncertain_findings?.length || 0} icon={Activity} color="accent" />
-                <StatCard label="Peak Conf." value={`${(maxConf * 100).toFixed(0)}%`} icon={ShieldCheck} color="success" />
-            </div>
-
             {/* ─── Body ─── */}
-            <div className="p-8 grid grid-cols-1 lg:grid-cols-3 gap-10">
-                {/* Main Content */}
-                <div className="lg:col-span-2 space-y-6">
-                    <ReportSection title="Clinical Context" content={report.clinical_indication} icon={Activity} accentColor="accent" />
-                    <ReportSection title="Findings & Observations" content={findings} icon={Brain} accentColor="primary" />
-                    <ReportSection title="Diagnostic Impression" content={impression} icon={CheckCircle} accentColor="success" />
+            <div className="p-6 space-y-8">
+                {/* Analysis Grid */}
+                <div>
+                    <h3 className="text-[10px] font-black text-slate-500 mb-5 flex items-center gap-3 uppercase tracking-[0.2em] pl-1">
+                        <Activity size={14} className="text-primary-500" />
+                        Diagnostic Likelihood
+                    </h3>
 
-                    {/* Warnings */}
+                    {allPredictions.length > 0 ? (
+                        <div className="grid grid-cols-2 gap-3">
+                            {allPredictions.map((pred, idx) => (
+                                <AnalysisCard
+                                    key={idx}
+                                    index={idx}
+                                    label={pred.label}
+                                    probability={pred.probability}
+                                    confidence={pred.confidence}
+                                    isUncertain={uncertain_findings?.some(u => u.label === pred.label)}
+                                />
+                            ))}
+                        </div>
+                    ) : (
+                        <div className="bg-background/50 rounded-2xl p-8 border border-border text-center">
+                            <Sparkles size={20} className="text-success mx-auto mb-3 opacity-60" />
+                            <p className="text-[10px] text-slate-600 font-black uppercase tracking-widest">Baseline Normal</p>
+                        </div>
+                    )}
+                </div>
+
+                {/* Synthesis Sections */}
+                <div className="space-y-6 pt-4 border-t border-border/50">
+                    <ReportSection title="Context" content={report.clinical_indication} icon={Activity} accentColor="accent" />
+                    <ReportSection title="Findings" content={findings} icon={Brain} accentColor="primary" />
+                    <ReportSection title="Impression" content={impression} icon={CheckCircle} accentColor="success" />
+
                     {warnings?.length > 0 && (
                         <motion.div
                             initial={{ opacity: 0 }}
@@ -329,11 +379,11 @@ const ReportDisplay = ({ report }) => {
                         >
                             <h4 className="text-[10px] font-black text-danger uppercase mb-3 flex items-center gap-2 tracking-[0.2em]">
                                 <AlertTriangle size={14} />
-                                Clinical Safeguard Alerts
+                                Safeguard Alerts
                             </h4>
                             <ul className="space-y-2">
                                 {warnings.map((w, i) => (
-                                    <li key={i} className="text-xs text-danger/80 flex items-start gap-2">
+                                    <li key={i} className="text-[11px] text-danger/80 flex items-start gap-2">
                                         <span className="mt-1.5 w-1 h-1 rounded-full bg-danger opacity-40 shrink-0" />
                                         {w}
                                     </li>
@@ -343,49 +393,17 @@ const ReportDisplay = ({ report }) => {
                     )}
                 </div>
 
-                {/* Sidebar Analysis */}
-                <div className="space-y-6">
-                    <div className="bg-background/50 rounded-2xl p-6 border border-border shadow-inner">
-                        <h3 className="text-xs font-black text-slate-400 mb-5 flex items-center gap-3 uppercase tracking-widest">
-                            <Activity size={16} className="text-primary-500" />
-                            Disease Likelihood
-                        </h3>
-
-                        {allPredictions.length > 0 ? (
-                            allPredictions.map((pred, idx) => (
-                                <ProbabilityBar
-                                    key={idx}
-                                    index={idx}
-                                    label={pred.label}
-                                    probability={pred.probability}
-                                    confidence={pred.confidence}
-                                    isUncertain={uncertain_findings?.some(u => u.label === pred.label)}
-                                />
-                            ))
-                        ) : (
-                            <div className="text-center py-6">
-                                <Sparkles size={24} className="text-success mx-auto mb-2 opacity-60" />
-                                <p className="text-xs text-slate-500 font-medium">No pathologies detected above threshold.</p>
-                            </div>
-                        )}
-                    </div>
-
-                    {/* Verification Badge */}
-                    <div className="p-5 border border-white/5 rounded-2xl bg-gradient-to-b from-white/[0.03] to-transparent">
-                        <div className="flex items-center gap-3 mb-3">
-                            <div className="p-2 bg-primary-500/10 rounded-lg">
-                                <ShieldCheck size={16} className="text-primary-400" />
-                            </div>
-                            <h4 className="text-[10px] font-black text-slate-500 uppercase tracking-widest">Expert Verification</h4>
+                {/* Verification Badge */}
+                <div className="pt-6 border-t border-border/50">
+                    <div className="flex items-center gap-3 mb-3">
+                        <div className="p-2 bg-primary-500/10 rounded-lg">
+                            <ShieldCheck size={16} className="text-primary-400" />
                         </div>
-                        <p className="text-[11px] text-slate-500 leading-relaxed">
-                            Generated by <span className="text-primary-400 font-bold">CogniRad++ v1.0</span> cognitive reasoning engine. Human clinician review is mandatory for all diagnostic signatures.
-                        </p>
-                        <div className="mt-3 flex items-center gap-2 text-[9px] font-bold text-slate-600">
-                            <div className="w-1.5 h-1.5 rounded-full bg-success animate-pulse" />
-                            PRO-FA / MIX-MLP / RCTA pipeline verified
-                        </div>
+                        <h4 className="text-[10px] font-black text-slate-500 uppercase tracking-widest">System Signature</h4>
                     </div>
+                    <p className="text-[10px] text-slate-600 leading-relaxed italic">
+                        Verified by <span className="text-primary-400 font-bold">CogniRad++ v1.0</span>. This AI output requires expert human validation before clinical integration.
+                    </p>
                 </div>
             </div>
         </motion.div>
