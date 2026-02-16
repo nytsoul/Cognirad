@@ -548,62 +548,8 @@ function App() {
               animate={{ opacity: 1 }}
               className="grid grid-cols-1 xl:grid-cols-12 gap-6 items-start"
             >
-              {/* ─── COLUMN 1: CLINICAL WORKLOAD (LEFT) ─── */}
-              <div className="xl:col-span-3 space-y-6 lg:sticky lg:top-28">
-                <div className="card-premium p-6">
-                  <h3 className="text-xs uppercase tracking-[0.2em] font-black text-slate-500 mb-6 flex items-center gap-3">
-                    <Activity size={16} className="text-primary-500" />
-                    01. Clinical Context
-                  </h3>
-
-                  <div className="space-y-4">
-                    <div>
-                      <label className="block text-[10px] font-black text-slate-600 uppercase tracking-widest mb-3">Patient Presentation</label>
-                      <textarea
-                        className="w-full px-5 py-4 bg-background border border-border rounded-xl focus:ring-2 focus:ring-primary-500 focus:border-transparent text-sm h-32 resize-none transition-all placeholder:text-slate-700 font-medium"
-                        placeholder="Enter clinical indication, symptoms, and history..."
-                        value={indication}
-                        onChange={(e) => setIndication(e.target.value)}
-                        disabled={isLoading}
-                      />
-                    </div>
-
-                    <div className="flex flex-col gap-3">
-                      <button
-                        onClick={generateReport}
-                        disabled={isLoading}
-                        className={clsx(
-                          "px-6 py-4 bg-primary-600 text-white rounded-xl text-xs font-black hover:bg-primary-500 transition-all shadow-glow flex items-center justify-center gap-3",
-                          isLoading && "opacity-50 pointer-events-none"
-                        )}
-                      >
-                        {isLoading ? <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" /> : <Microscope size={18} />}
-                        {isLoading ? "Analyzing..." : "Update Analysis"}
-                      </button>
-                      <button
-                        onClick={() => handleFileSelect(null)}
-                        className="px-6 py-3 bg-white/5 hover:bg-white/10 text-slate-400 rounded-xl text-[10px] font-bold uppercase tracking-widest transition-all border border-white/5"
-                        disabled={isLoading}
-                      >
-                        Discard Case
-                      </button>
-                    </div>
-                  </div>
-                </div>
-
-                {report && (
-                  <div className="animate-in fade-in slide-in-from-bottom-4 duration-700">
-                    <ClinicianEditor
-                      predictions={report.predicted_diseases}
-                      isRegenerating={isLoading}
-                      onRegenerate={handleRegenerate}
-                    />
-                  </div>
-                )}
-              </div>
-
-              {/* ─── COLUMN 2: RADIOGRAPH & REASONING (CENTER) ─── */}
-              <div className="xl:col-span-5 space-y-6">
+              {/* ─── MAIN (LEFT): IMAGE + REASONING ─── */}
+              <div className="xl:col-span-7 space-y-6">
                 <div className="card-premium p-1 relative overflow-hidden group">
                   <ImageViewer
                     imageUrl={imagePreview}
@@ -625,81 +571,63 @@ function App() {
                 </div>
               </div>
 
-              {/* ─── COLUMN 3: SYNTHESIS & REPORT (RIGHT) ─── */}
-              <div className="xl:col-span-4">
-                <AnimatePresence mode="wait">
-                  {isLoading && activeStage < 3 ? (
-                    <motion.div
-                      key="loading-state"
-                      initial={{ opacity: 0, scale: 0.98 }}
-                      animate={{ opacity: 1, scale: 1 }}
-                      exit={{ opacity: 0, scale: 0.98 }}
-                      className="card-premium p-12 flex flex-col items-center justify-center text-center min-h-[500px] relative overflow-hidden"
-                    >
-                      <div className="absolute inset-0 bg-primary-500/5 animate-pulse-slow pointer-events-none" />
-                      <div className="relative mb-8">
-                        <div className="w-16 h-16 border-2 border-primary-500/20 border-t-primary-500 rounded-full animate-spin" />
-                        <div className="absolute inset-0 flex items-center justify-center">
-                          <Brain size={20} className="text-primary-500" />
-                        </div>
+              {/* ─── WORKSPACE (RIGHT): CONTROLS + REPORT + EDITOR ─── */}
+              <div className="xl:col-span-5 space-y-6 lg:sticky lg:top-28">
+                <div className="card-premium p-6">
+                  <h3 className="text-xs uppercase tracking-[0.2em] font-black text-slate-500 mb-4 flex items-center gap-3">
+                    <Activity size={16} className="text-primary-500" />
+                    Case Controls
+                  </h3>
+
+                  <div className="space-y-4">
+                    <label className="block text-[10px] font-black text-slate-600 uppercase tracking-widest mb-2">Patient Presentation</label>
+                    <textarea
+                      className="w-full px-5 py-4 bg-background border border-border rounded-xl focus:ring-2 focus:ring-primary-500 focus:border-transparent text-sm h-28 resize-none transition-all placeholder:text-slate-700 font-medium"
+                      placeholder="Enter clinical indication, symptoms, and history..."
+                      value={indication}
+                      onChange={(e) => setIndication(e.target.value)}
+                      disabled={isLoading}
+                    />
+
+                    <div className="flex items-center gap-3">
+                      <button
+                        onClick={generateReport}
+                        disabled={isLoading}
+                        className={clsx(
+                          "px-5 py-3 bg-primary-600 text-white rounded-xl text-sm font-black hover:bg-primary-500 transition-all shadow-glow",
+                          isLoading && "opacity-50 pointer-events-none"
+                        )}
+                      >
+                        {isLoading ? <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" /> : <Microscope size={16} />}
+                        <span className="ml-2">{isLoading ? 'Analyzing...' : 'Update Analysis'}</span>
+                      </button>
+
+                      <button
+                        onClick={() => handleFileSelect(null)}
+                        className="px-4 py-3 bg-white/5 hover:bg-white/10 text-slate-400 rounded-xl text-sm font-bold uppercase tracking-widest transition-all border border-white/5"
+                        disabled={isLoading}
+                      >
+                        Discard Case
+                      </button>
+
+                      <div className="ml-auto text-right">
+                        <div className="text-[10px] font-black text-slate-600 uppercase tracking-widest">Session</div>
+                        <div className="text-sm font-bold text-primary-400 tabular-nums">{analysisCount} analyses</div>
                       </div>
-                      <h4 className="text-xl font-black text-white mb-2">
-                        {COGNITIVE_STAGES[activeStage].id} <span className="text-slate-500 tracking-normal font-medium text-sm">Processing</span>
-                      </h4>
-                      <p className="text-xs text-slate-500 max-w-[240px] leading-relaxed">
-                        {COGNITIVE_STAGES[activeStage].name} is active.
-                      </p>
-                    </motion.div>
-                  ) : report ? (
-                    <motion.div
-                      key="report-state"
-                      initial={{ opacity: 0, x: 20 }}
-                      animate={{ opacity: 1, x: 0 }}
-                    >
-                      <ReportDisplay report={report} />
-                    </motion.div>
-                  ) : (
-                    <div className="card-premium p-12 border-dashed border-slate-800 flex flex-col items-center justify-center text-center min-h-[500px]">
-                      <div className="p-4 bg-slate-900/50 rounded-2xl mb-4">
-                        <ScanEye size={32} className="text-slate-700" />
-                      </div>
-                      <h4 className="text-sm font-bold text-slate-600 uppercase tracking-widest">Awaiting Synthesis</h4>
-                      <p className="text-[10px] text-slate-700 mt-2 max-w-[200px]">Initialize the cognitive pipeline to generate a structured report.</p>
                     </div>
-                  )}
-                </AnimatePresence>
-              </div>
-            </motion.div>
-          )}
-        </AnimatePresence>
+                  </div>
+                </div>
 
-      </main>
+                <ReportDisplay report={report} />
 
-      {/* Footer */}
-      <footer className="mt-16 border-t border-white/5 bg-surface/30">
-        <div className="max-w-[1700px] mx-auto px-6 py-8">
-          <div className="flex flex-col md:flex-row items-center justify-between gap-4">
-            <div className="flex items-center gap-3">
-              <Brain size={18} className="text-primary-500/50" />
-              <span className="text-xs font-bold text-slate-600">
-                CogniRad<span className="text-primary-500/60">++</span> v1.0 — Knowledge-Grounded Cognitive Radiology
-              </span>
-            </div>
-            <div className="flex items-center gap-6 text-[10px] font-bold text-slate-700 uppercase tracking-widest">
-              <span className="flex items-center gap-1.5"><Heart size={10} className="text-danger/40" /> Built for Clinicians</span>
-              <span className="flex items-center gap-1.5"><Shield size={10} className="text-primary-500/40" /> AI-Assisted Only</span>
-              <span className="flex items-center gap-1.5"><Clock size={10} className="text-slate-600" /> {new Date().getFullYear()}</span>
-            </div>
-          </div>
-          <div className="mt-4 text-center">
-            <p className="text-[10px] text-slate-700 leading-relaxed max-w-2xl mx-auto">
-              Disclaimer: CogniRad++ is an AI-assisted diagnostic tool. All reports must be reviewed and validated by a qualified radiologist before clinical use.
-            </p>
-          </div>
-        </div>
-      </footer>
-    </div>
-  );
-}
-
-export default App;
+                <div className="card-premium p-6">
+                  <h3 className="text-xs uppercase tracking-[0.2em] font-black text-slate-500 mb-4 flex items-center gap-3">
+                    <FileText size={16} className="text-primary-500" />
+                    Clinician Actions
+                  </h3>
+                  <ClinicianEditor
+                    predictions={report.predicted_diseases}
+                    isRegenerating={isLoading}
+                    onRegenerate={handleRegenerate}
+                  />
+                </div>

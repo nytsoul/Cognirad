@@ -287,123 +287,202 @@ const StatCard = ({ label, value, icon: Icon, color = "primary" }) => (
     </div>
 );
 
-/* ═══════════════ MAIN COMPONENT ═══════════════ */
+/* ═══════════════ MAIN COMPONENT (REDESIGN) ═══════════════ */
 const ReportDisplay = ({ report }) => {
     if (!report) return null;
 
-    const { findings, impression, predicted_diseases, uncertain_findings, warnings } = report;
+    const { findings, impression, predicted_diseases = [], uncertain_findings = [], warnings = [] } = report;
 
     const allPredictions = [
-        ...(predicted_diseases || []),
-        ...(uncertain_findings || [])
+        ...predicted_diseases,
+        ...uncertain_findings
     ].sort((a, b) => b.probability - a.probability);
 
+    const topPrediction = allPredictions[0] || null;
     const highRisk = allPredictions.filter(p => p.probability > 0.8).length;
-    const maxConf = allPredictions.length
-        ? Math.max(...allPredictions.map(p => p.confidence))
-        : 0;
+    const avgConfidence = allPredictions.length ? (allPredictions.reduce((s, p) => s + (p.confidence || 0), 0) / allPredictions.length) : 0;
+
+    const [activeTab, setActiveTab] = useState('summary');
+    const [selected, setSelected] = useState(null);
+    const [reviewed, setReviewed] = useState(false);
 
     return (
         <motion.div
-            initial={{ opacity: 0, y: 20 }}
+            initial={{ opacity: 0, y: 12 }}
             animate={{ opacity: 1, y: 0 }}
             className="bg-surface rounded-2xl shadow-glass border border-border overflow-hidden"
         >
-            {/* ─── Header ─── */}
-            <div className="p-6 border-b border-border bg-gradient-to-r from-white/[0.04] to-transparent flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
-                <div className="flex items-center gap-4">
+            {/* Header */}
+            <div className="p-5 border-b border-border flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 bg-gradient-to-r from-white/[0.02] to-transparent">
+                <div className="flex items-start gap-4">
                     <div className="p-2.5 bg-primary-500/10 rounded-xl border border-primary-500/20">
-                        <FileText className="text-primary-500" size={22} />
+                        <FileText className="text-primary-500" size={20} />
                     </div>
                     <div>
-                        <h2 className="text-xl font-black text-white tracking-tight">Automated Radiology Synthesis</h2>
+                        <h3 className="text-lg font-extrabold text-white">Clinical Synthesis</h3>
                         <div className="flex items-center gap-3 mt-1">
-                            <span className="text-[10px] font-bold text-slate-500 flex items-center gap-1.5">
-                                <Clock size={10} />
-                                {new Date().toLocaleString()}
-                            </span>
+                            <span className="text-[11px] text-slate-500 font-bold flex items-center gap-2"><Clock size={12} />{new Date().toLocaleString()}</span>
                             {warnings?.length > 0 && (
-                                <span className="flex items-center gap-1.5 px-2 py-0.5 bg-danger/10 text-danger text-[9px] font-black uppercase tracking-widest rounded-full border border-danger/20">
-                                    <AlertTriangle size={9} />
-                                    INTERVENTION_REQUIRED
-                                </span>
+                                <span className="px-2 py-0.5 bg-danger/10 text-danger text-[10px] font-black uppercase rounded-full border border-danger/20">Safeguard</span>
                             )}
                         </div>
                     </div>
                 </div>
 
-                <DownloadMenu report={report} />
+                <div className="flex items-center gap-3">
+                    <div className="hidden sm:block">
+                        <DownloadMenu report={report} />
+                    </div>
+                    <button
+                        onClick={() => setReviewed(!reviewed)}
+                        className={clsx(
+                            'px-4 py-2 rounded-xl font-black text-sm transition-colors',
+                            reviewed ? 'bg-success/10 text-success border border-success/20' : 'bg-primary-600 text-white'
+                        )}
+                    >
+                        <Check size={14} />
+                        <span className="ml-2">{reviewed ? 'Reviewed' : 'Mark Reviewed'}</span>
+                    </button>
+                </div>
             </div>
 
-            {/* ─── Body ─── */}
-            <div className="p-6 space-y-8">
-                {/* Analysis Grid */}
-                <div>
-                    <h3 className="text-[10px] font-black text-slate-500 mb-5 flex items-center gap-3 uppercase tracking-[0.2em] pl-1">
-                        <Activity size={14} className="text-primary-500" />
-                        Diagnostic Likelihood
-                    </h3>
-
-                    {allPredictions.length > 0 ? (
-                        <div className="grid grid-cols-2 gap-3">
-                            {allPredictions.map((pred, idx) => (
-                                <AnalysisCard
-                                    key={idx}
-                                    index={idx}
-                                    label={pred.label}
-                                    probability={pred.probability}
-                                    confidence={pred.confidence}
-                                    isUncertain={uncertain_findings?.some(u => u.label === pred.label)}
-                                />
+            {/* Workspace */}
+            <div className="p-6">
+                <div className="flex gap-6">
+                    <div className="flex-1">
+                        {/* Tabs */}
+                        <div className="flex items-center gap-3 mb-6">
+                            {['summary','details','evidence','actions'].map(tab => (
+                                <button
+                                    key={tab}
+                                    onClick={() => setActiveTab(tab)}
+                                    className={clsx(
+                                        'px-4 py-2 rounded-full text-sm font-bold transition-colors',
+                                        activeTab === tab ? 'bg-primary-600 text-white' : 'bg-white/3 text-slate-300'
+                                    )}
+                                >
+                                    {tab[0].toUpperCase() + tab.slice(1)}
+                                </button>
                             ))}
                         </div>
-                    ) : (
-                        <div className="bg-background/50 rounded-2xl p-8 border border-border text-center">
-                            <Sparkles size={20} className="text-success mx-auto mb-3 opacity-60" />
-                            <p className="text-[10px] text-slate-600 font-black uppercase tracking-widest">Baseline Normal</p>
+
+                        {/* Tab content */}
+                        <div className="min-h-[240px]">
+                            {activeTab === 'summary' && (
+                                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                    <div className="space-y-4">
+                                        <div className="flex items-center justify-between">
+                                            <div className="text-xs font-black text-slate-500 uppercase tracking-widest">Top Findings</div>
+                                            <div className="text-xs text-slate-400">{allPredictions.length} predictions</div>
+                                        </div>
+
+                                        <div className="space-y-3">
+                                            {allPredictions.slice(0,4).map((p, i) => {
+                                                const isUncertain = uncertain_findings?.some(u => u.label === p.label);
+                                                return (
+                                                    <div key={i} className="p-3 rounded-xl bg-background/60 border border-white/5 flex items-center gap-3 hover:shadow-glow transition">
+                                                        <div className="w-12 h-12 rounded-md bg-slate-900/40 flex items-center justify-center font-black text-white">{(p.probability*100).toFixed(0)}%</div>
+                                                        <div className="flex-1 min-w-0">
+                                                            <div className="flex items-center gap-2">
+                                                                <div className="text-sm font-bold text-white truncate">{p.label}</div>
+                                                                {isUncertain && <span className="text-xs text-amber-300 font-black uppercase px-2 py-0.5 rounded-full bg-amber-950/30">Uncertain</span>}
+                                                            </div>
+                                                            <div className="text-[11px] text-slate-400 mt-1">Confidence {(p.confidence*100).toFixed(0)}%</div>
+                                                        </div>
+                                                        <div className="text-xs font-black text-slate-500">Evidence</div>
+                                                    </div>
+                                                );
+                                            })}
+                                        </div>
+                                    </div>
+
+                                    <div className="space-y-4">
+                                        <div className="grid grid-cols-2 gap-3">
+                                            <StatCard label="High Risk" value={`${highRisk}`} icon={AlertTriangle} color="danger" />
+                                            <StatCard label="Avg Confidence" value={`${(avgConfidence*100).toFixed(0)}%`} icon={BarChart3} color="primary" />
+                                        </div>
+
+                                        <div className="p-4 rounded-xl bg-background/60 border border-white/5">
+                                            <div className="text-[10px] text-slate-400 uppercase font-black tracking-widest mb-2">Quick Impression</div>
+                                            <div className="text-sm text-slate-300 font-medium">{impression || 'No concise impression available.'}</div>
+                                        </div>
+                                    </div>
+                                </div>
+                            )}
+
+                            {activeTab === 'details' && (
+                                <div className="space-y-6">
+                                    <ReportSection title="Context" content={report.clinical_indication} icon={Activity} accentColor="accent" />
+                                    <ReportSection title="Findings" content={findings} icon={Brain} accentColor="primary" />
+                                    <ReportSection title="Impression" content={impression} icon={CheckCircle} accentColor="success" />
+                                </div>
+                            )}
+
+                            {activeTab === 'evidence' && (
+                                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                                    <div className="md:col-span-2 space-y-3">
+                                        {allPredictions.map((p, idx) => (
+                                            <div
+                                                key={idx}
+                                                onClick={() => setSelected(p)}
+                                                className={clsx('p-3 rounded-xl border bg-background/50 cursor-pointer', selected?.label === p.label && 'border-primary-500/30 shadow-glow')}
+                                            >
+                                                <div className="flex items-center justify-between">
+                                                    <div className="flex items-center gap-3">
+                                                        <div className="text-sm font-bold text-white">{p.label}</div>
+                                                        <div className="text-[11px] text-slate-400">{(p.probability*100).toFixed(1)}% • Conf {(p.confidence*100).toFixed(0)}%</div>
+                                                    </div>
+                                                    <div>
+                                                        <button className="text-xs px-3 py-1 rounded-full bg-white/5 text-slate-300 font-bold">Show on image</button>
+                                                    </div>
+                                                </div>
+                                                <p className="text-[12px] text-slate-500 mt-2">{p.explain || ''}</p>
+                                            </div>
+                                        ))}
+                                    </div>
+
+                                    <div className="space-y-3">
+                                        <div className="p-3 rounded-xl bg-slate-900/30 border border-white/5 flex items-center justify-center h-full">
+                                            {report.attention_maps?.lungs ? (
+                                                <img src={report.attention_maps.lungs} alt="attention" className="object-contain w-full h-44" />
+                                            ) : (
+                                                <div className="text-slate-500 text-sm">Attention map unavailable</div>
+                                            )}
+                                        </div>
+
+                                        <div className="p-3 rounded-xl bg-background/60 border border-white/5">
+                                            <div className="text-[11px] text-slate-400">Selected</div>
+                                            <div className="text-sm font-bold text-white mt-2">{selected?.label || '—'}</div>
+                                            <div className="text-[11px] text-slate-400 mt-1">Prob {(selected?.probability * 100 || 0).toFixed(1)}% • Conf {(selected?.confidence * 100 || 0).toFixed(0)}%</div>
+                                        </div>
+                                    </div>
+                                </div>
+                            )}
+
+                            {activeTab === 'actions' && (
+                                <div className="space-y-4">
+                                    <div className="flex gap-3">
+                                        <DownloadMenu report={report} />
+                                        <button className="px-4 py-2 bg-primary-600 text-white rounded-xl font-black">Approve & Export</button>
+                                        <button className="px-4 py-2 bg-white/5 text-slate-300 rounded-xl font-bold">Send to PACS</button>
+                                    </div>
+
+                                    <div className="p-3 bg-background/60 border border-white/5 rounded-xl">
+                                        <div className="text-xs text-slate-400">Audit</div>
+                                        <div className="text-[11px] text-slate-300 mt-2">Report generated by CogniRad++ — clinician sign-off required.</div>
+                                    </div>
+                                </div>
+                            )}
                         </div>
-                    )}
-                </div>
-
-                {/* Synthesis Sections */}
-                <div className="space-y-6 pt-4 border-t border-border/50">
-                    <ReportSection title="Context" content={report.clinical_indication} icon={Activity} accentColor="accent" />
-                    <ReportSection title="Findings" content={findings} icon={Brain} accentColor="primary" />
-                    <ReportSection title="Impression" content={impression} icon={CheckCircle} accentColor="success" />
-
-                    {warnings?.length > 0 && (
-                        <motion.div
-                            initial={{ opacity: 0 }}
-                            animate={{ opacity: 1 }}
-                            className="p-5 bg-danger/5 border border-danger/10 rounded-2xl"
-                        >
-                            <h4 className="text-[10px] font-black text-danger uppercase mb-3 flex items-center gap-2 tracking-[0.2em]">
-                                <AlertTriangle size={14} />
-                                Safeguard Alerts
-                            </h4>
-                            <ul className="space-y-2">
-                                {warnings.map((w, i) => (
-                                    <li key={i} className="text-[11px] text-danger/80 flex items-start gap-2">
-                                        <span className="mt-1.5 w-1 h-1 rounded-full bg-danger opacity-40 shrink-0" />
-                                        {w}
-                                    </li>
-                                ))}
-                            </ul>
-                        </motion.div>
-                    )}
-                </div>
-
-                {/* Verification Badge */}
-                <div className="pt-6 border-t border-border/50">
-                    <div className="flex items-center gap-3 mb-3">
-                        <div className="p-2 bg-primary-500/10 rounded-lg">
-                            <ShieldCheck size={16} className="text-primary-400" />
-                        </div>
-                        <h4 className="text-[10px] font-black text-slate-500 uppercase tracking-widest">System Signature</h4>
                     </div>
-                    <p className="text-[10px] text-slate-600 leading-relaxed italic">
-                        Verified by <span className="text-primary-400 font-bold">CogniRad++ v1.0</span>. This AI output requires expert human validation before clinical integration.
-                    </p>
+
+                    <div className="w-56 shrink-0 hidden lg:block">
+                        <div className="p-3 rounded-xl bg-slate-900/10 border border-white/5">
+                            <div className="text-[10px] text-slate-400 uppercase font-black tracking-widest mb-2">Case Snapshot</div>
+                            <div className="text-sm font-black text-white truncate">{topPrediction?.label || 'No findings'}</div>
+                            <div className="text-[11px] text-slate-400 mt-2">Top probability {(topPrediction?.probability ?? 0 * 100).toFixed(0)}%</div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </motion.div>
