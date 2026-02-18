@@ -28,7 +28,7 @@ export default {
         danger: '#ef4444',
       },
       fontFamily: {
-        sans: ['Outfit', 'Inter', 'sans-serif'],
+        sans: ['-apple-system', 'BlinkMacSystemFont', 'Segoe UI', 'Helvetica Neue', 'sans-serif'],
       },
       boxShadow: {
         'glass': '0 8px 32px 0 rgba(0, 0, 0, 0.37)',

@@ -33,13 +33,10 @@ function App() {
     return parseInt(localStorage.getItem('cognirad_analysis_count') || '0', 10);
   });
   const [analysisTime, setAnalysisTime] = useState(null);
+  const [selectedPrediction, setSelectedPrediction] = useState(null);
 
   useEffect(() => {
-    // Add font from Google Fonts
-    const link = document.createElement('link');
-    link.href = 'https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap';
-    link.rel = 'stylesheet';
-    document.head.appendChild(link);
+    // System fonts are used (San Francisco)
   }, []);
 
   const handleFileSelect = (selectedFile) => {
@@ -47,11 +44,13 @@ function App() {
     if (selectedFile) {
       setReport(null);
       setActiveStage(0);
+      setSelectedPrediction(null);
       const reader = new FileReader();
       reader.onloadend = () => setImagePreview(reader.result);
       reader.readAsDataURL(selectedFile);
     } else {
       setImagePreview(null);
+      setSelectedPrediction(null);
     }
   };
 
@@ -555,7 +554,7 @@ function App() {
                     imageUrl={imagePreview}
                     isLoading={isLoading}
                     perceptionLayers={report?.perception_layers}
-                    attentionMap={report?.attention_maps?.lungs}
+                    attentionMap={selectedPrediction?.attention_map || report?.attention_maps?.lungs}
                   />
                 </div>
 
@@ -618,7 +617,7 @@ function App() {
                   </div>
                 </div>
 
-                <ReportDisplay report={report} />
+                <ReportDisplay report={report} onSelectPrediction={setSelectedPrediction} />
 
                 <div className="card-premium p-6">
                   <h3 className="text-xs uppercase tracking-[0.2em] font-black text-slate-500 mb-4 flex items-center gap-3">
@@ -626,8 +625,43 @@ function App() {
                     Clinician Actions
                   </h3>
                   <ClinicianEditor
-                    predictions={report.predicted_diseases}
+                    predictions={report?.predicted_diseases ?? []}
                     isRegenerating={isLoading}
                     onRegenerate={handleRegenerate}
                   />
                 </div>
+              </div>
+            </motion.div>
+          )}
+        </AnimatePresence>
+
+      </main>
+
+      {/* Footer */}
+      <footer className="mt-16 border-t border-white/5 bg-surface/30">
+        <div className="max-w-[1700px] mx-auto px-6 py-8">
+          <div className="flex flex-col md:flex-row items-center justify-between gap-4">
+            <div className="flex items-center gap-3">
+              <Brain size={18} className="text-primary-500/50" />
+              <span className="text-xs font-bold text-slate-600">
+                CogniRad<span className="text-primary-500/60">++</span> v1.0 — Knowledge-Grounded Cognitive Radiology
+              </span>
+            </div>
+            <div className="flex items-center gap-6 text-[10px] font-bold text-slate-700 uppercase tracking-widest">
+              <span className="flex items-center gap-1.5"><Heart size={10} className="text-danger/40" /> Built for Clinicians</span>
+              <span className="flex items-center gap-1.5"><Shield size={10} className="text-primary-500/40" /> AI-Assisted Only</span>
+              <span className="flex items-center gap-1.5"><Clock size={10} className="text-slate-600" /> {new Date().getFullYear()}</span>
+            </div>
+          </div>
+          <div className="mt-4 text-center">
+            <p className="text-[10px] text-slate-700 leading-relaxed max-w-2xl mx-auto">
+              Disclaimer: CogniRad++ is an AI-assisted diagnostic tool. All reports must be reviewed and validated by a qualified radiologist before clinical use.
+            </p>
+          </div>
+        </div>
+      </footer>
+    </div>
+  );
+}
+
+export default App;

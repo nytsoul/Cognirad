@@ -288,7 +288,11 @@ const StatCard = ({ label, value, icon: Icon, color = "primary" }) => (
 );
 
 /* ═══════════════ MAIN COMPONENT (REDESIGN) ═══════════════ */
-const ReportDisplay = ({ report }) => {
+const ReportDisplay = ({ report, onSelectPrediction }) => {
+    const [activeTab, setActiveTab] = useState('summary');
+    const [selected, setSelected] = useState(null);
+    const [reviewed, setReviewed] = useState(false);
+
     if (!report) return null;
 
     const { findings, impression, predicted_diseases = [], uncertain_findings = [], warnings = [] } = report;
@@ -301,10 +305,6 @@ const ReportDisplay = ({ report }) => {
     const topPrediction = allPredictions[0] || null;
     const highRisk = allPredictions.filter(p => p.probability > 0.8).length;
     const avgConfidence = allPredictions.length ? (allPredictions.reduce((s, p) => s + (p.confidence || 0), 0) / allPredictions.length) : 0;
-
-    const [activeTab, setActiveTab] = useState('summary');
-    const [selected, setSelected] = useState(null);
-    const [reviewed, setReviewed] = useState(false);
 
     return (
         <motion.div
@@ -389,7 +389,12 @@ const ReportDisplay = ({ report }) => {
                                                             </div>
                                                             <div className="text-[11px] text-slate-400 mt-1">Confidence {(p.confidence*100).toFixed(0)}%</div>
                                                         </div>
-                                                        <div className="text-xs font-black text-slate-500">Evidence</div>
+                                                        <button
+                                                        onClick={() => onSelectPrediction?.(p)}
+                                                        className="text-xs font-black text-primary-400 hover:text-primary-300 transition-colors px-2 py-1 rounded-lg hover:bg-primary-500/10"
+                                                    >
+                                                        Show on image
+                                                    </button>
                                                     </div>
                                                 );
                                             })}
@@ -433,7 +438,12 @@ const ReportDisplay = ({ report }) => {
                                                         <div className="text-[11px] text-slate-400">{(p.probability*100).toFixed(1)}% • Conf {(p.confidence*100).toFixed(0)}%</div>
                                                     </div>
                                                     <div>
-                                                        <button className="text-xs px-3 py-1 rounded-full bg-white/5 text-slate-300 font-bold">Show on image</button>
+                                                        <button
+                                                            onClick={() => onSelectPrediction?.(p)}
+                                                            className="text-xs px-3 py-1 rounded-full bg-primary-500/20 text-primary-300 font-bold hover:bg-primary-500/30 transition-colors"
+                                                        >
+                                                            Show on image
+                                                        </button>
                                                     </div>
                                                 </div>
                                                 <p className="text-[12px] text-slate-500 mt-2">{p.explain || ''}</p>

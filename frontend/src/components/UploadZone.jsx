@@ -31,6 +31,15 @@ const UploadZone = ({ onFileSelect, isProcessing }) => {
         return true;
     };
 
+    const handleFile = useCallback((file) => {
+        const reader = new FileReader();
+        reader.onloadend = () => {
+            setPreview(reader.result);
+        };
+        reader.readAsDataURL(file);
+        onFileSelect(file);
+    }, [onFileSelect]);
+
     const handleDrop = useCallback((e) => {
         e.preventDefault();
         e.stopPropagation();
@@ -42,7 +51,7 @@ const UploadZone = ({ onFileSelect, isProcessing }) => {
                 handleFile(file);
             }
         }
-    }, [onFileSelect]);
+    }, [onFileSelect, handleFile]);
 
     const handleChange = (e) => {
         e.preventDefault();
@@ -52,15 +61,6 @@ const UploadZone = ({ onFileSelect, isProcessing }) => {
                 handleFile(file);
             }
         }
-    };
-
-    const handleFile = (file) => {
-        const reader = new FileReader();
-        reader.onloadend = () => {
-            setPreview(reader.result);
-        };
-        reader.readAsDataURL(file);
-        onFileSelect(file);
     };
 
     const clearFile = () => {
