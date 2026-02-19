@@ -4,12 +4,12 @@ const ThemeContext = createContext();
 
 export function ThemeProvider({ children }) {
   const [theme, setTheme] = useState(() => {
-    // Check localStorage first
+   
     const savedTheme = localStorage.getItem('cognirad-theme');
     if (savedTheme) {
       return savedTheme;
     }
-    // Check system preference
+   
     return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
   });
 
@@ -17,7 +17,7 @@ export function ThemeProvider({ children }) {
     // Update localStorage
     localStorage.setItem('cognirad-theme', theme);
 
-    // Update document class and CSS variables
+  
     const root = document.documentElement;
     if (theme === 'dark') {
       root.classList.remove('light');
