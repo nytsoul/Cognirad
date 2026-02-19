@@ -14,7 +14,7 @@ export function ThemeProvider({ children }) {
   });
 
   useEffect(() => {
-    // Update localStorage
+
     localStorage.setItem('cognirad-theme', theme);
 
   
