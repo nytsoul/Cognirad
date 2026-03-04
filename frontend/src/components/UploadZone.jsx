@@ -107,16 +107,16 @@ const UploadZone = ({ onFileSelect, isProcessing }) => {
 
                 {preview ? (
                     <div className="w-full h-full flex flex-col items-center">
-                        <div className="relative w-full max-h-[450px] overflow-hidden rounded-xl shadow-glass border border-white/5">
+                        <div className="relative w-full max-h-[450px] overflow-hidden rounded-xl shadow-glass border border-border">
                             <img src={preview} alt="Preview" className="w-full h-full object-contain" />
                             <button
                                 onClick={(e) => { e.stopPropagation(); clearFile(); }}
-                                className="absolute top-4 right-4 p-2 bg-black/60 hover:bg-black/80 backdrop-blur-md rounded-full text-white/70 hover:text-danger transition-colors border border-white/10"
+                                className="absolute top-4 right-4 p-2 bg-surface/80 hover:bg-surface-secondary backdrop-blur-md rounded-full text-secondary hover:text-danger transition-colors border border-border"
                             >
                                 <X size={20} />
                             </button>
                         </div>
-                        <div className="mt-6 text-[10px] uppercase font-black tracking-[0.2em] text-primary-400 flex items-center gap-3">
+                        <div className="mt-6 text-[10px] uppercase font-black tracking-[0.2em] text-medical flex items-center gap-3">
                             <div className="w-1.5 h-1.5 rounded-full bg-primary-500 animate-pulse shadow-glow" />
                             Visual Data Locked
                         </div>
@@ -125,17 +125,17 @@ const UploadZone = ({ onFileSelect, isProcessing }) => {
                     <label htmlFor="file-upload" className="flex flex-col items-center cursor-pointer w-full h-full justify-center p-4">
                         <div className={clsx(
                             "p-5 rounded-2xl mb-6 transition-all duration-300",
-                            dragActive ? "bg-primary-500 text-white shadow-glow" : "bg-white/5 text-slate-500 group-hover:bg-primary-500/10 group-hover:text-primary-400"
+                            dragActive ? "bg-primary-500 text-white shadow-glow" : "bg-surface-secondary text-tertiary group-hover:bg-primary-500/10 group-hover:text-medical"
                         )}>
                             <UploadCloud size={48} />
                         </div>
-                        <p className="text-2xl font-black text-white mb-2 tracking-tight">
+                        <p className="text-2xl font-black text-primary mb-2 tracking-tight">
                             {dragActive ? "Drop Digital Radiograph" : "Upload Case Data"}
                         </p>
-                        <p className="text-sm text-slate-500 text-center max-w-xs leading-relaxed">
+                        <p className="text-sm text-secondary text-center max-w-xs leading-relaxed">
                             Drag and drop high-res X-ray imagery or <span className="text-primary-500 font-bold">browse workstation</span>
                         </p>
-                        <div className="mt-8 px-6 py-2.5 bg-white/5 border border-white/10 rounded-xl text-xs font-black uppercase tracking-widest text-slate-400 hover:bg-white/10 hover:text-white transition-all">
+                        <div className="mt-8 px-6 py-2.5 bg-surface-secondary border border-border rounded-xl text-xs font-black uppercase tracking-widest text-secondary hover:bg-surface-tertiary hover:text-primary transition-all">
                             Select DICOM/Image
                         </div>
                     </label>

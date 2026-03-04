@@ -47,22 +47,22 @@ const AnalysisCard = ({ label, probability, confidence, isUncertain, index }) =>
                     "text-[8px] font-black uppercase tracking-widest flex items-center gap-1",
                     severity.color === "danger" ? "text-danger" :
                         severity.color === "accent" ? "text-accent" :
-                            severity.color === "primary" ? "text-primary-400" : "text-success"
+                            severity.color === "primary" ? "text-medical" : "text-success"
                 )}>
                     <StatusIcon size={9} />
                     {severity.label}
                 </div>
-                <div className="text-sm font-black text-white tabular-nums">
+                <div className="text-sm font-black text-primary tabular-nums">
                     {(probability * 100).toFixed(0)}%
                 </div>
             </div>
 
-            <h4 className="text-[10px] font-bold text-slate-200 truncate pr-2 uppercase tracking-wide">
+            <h4 className="text-[10px] font-bold text-secondary truncate pr-2 uppercase tracking-wide">
                 {label}
             </h4>
 
             <div className="flex items-center gap-1.5 mt-1">
-                <div className="flex-1 h-1 bg-slate-900/60 rounded-full overflow-hidden">
+                <div className="flex-1 h-1 bg-surface-secondary rounded-full overflow-hidden">
                     <motion.div
                         initial={{ width: 0 }}
                         animate={{ width: `${probability * 100}%` }}
@@ -84,18 +84,18 @@ const AnalysisCard = ({ label, probability, confidence, isUncertain, index }) =>
 /* ───────────── Report Section ───────────── */
 const ReportSection = ({ title, content, icon: Icon, accentColor = "primary" }) => (
     <div className="group">
-        <h3 className="text-[10px] uppercase tracking-[0.2em] text-slate-600 font-black mb-3 flex items-center gap-3">
+        <h3 className="text-[10px] uppercase tracking-[0.2em] text-secondary font-black mb-3 flex items-center gap-3">
             <div className={clsx(
                 "w-5 h-5 rounded-md flex items-center justify-center",
                 accentColor === "primary" ? "bg-primary-500/10" : accentColor === "success" ? "bg-success/10" : "bg-accent/10"
             )}>
                 <Icon size={11} className={clsx(
-                    accentColor === "primary" ? "text-primary-400" : accentColor === "success" ? "text-success" : "text-accent"
+                    accentColor === "primary" ? "text-medical" : accentColor === "success" ? "text-success" : "text-accent"
                 )} />
             </div>
             {title}
         </h3>
-        <div className="text-slate-300 leading-relaxed text-sm bg-background/80 border border-border p-5 rounded-2xl font-medium tracking-wide hover:border-primary-500/20 transition-colors duration-300 relative overflow-hidden">
+        <div className="text-secondary leading-relaxed text-sm bg-surface-secondary border border-border p-5 rounded-2xl font-medium tracking-wide hover:border-primary-500/20 transition-colors duration-300 relative overflow-hidden">
             <div className="absolute top-0 left-0 w-1 h-full bg-gradient-to-b from-primary-500/40 to-transparent rounded-l-2xl" />
             <p className="pl-2">{content || "Generating clinical synthesis..."}</p>
         </div>

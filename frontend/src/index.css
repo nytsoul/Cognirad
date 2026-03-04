@@ -1,70 +1,779 @@
-@tailwind base;
+﻿@tailwind base;
 @tailwind components;
 @tailwind utilities;
 
-@layer base {
-  body {
-    @apply bg-background text-slate-100 antialiased font-sans;
-  }
+/* ============================================
+   PROFESSIONAL HOSPITAL GRADE THEME SYSTEM
+   Color System: HSL Variables for Dynamic Theming
+   Mode: Light (default), Dark (.dark class)
+   ============================================ */
 
-  ::selection {
-    @apply bg-primary-500/30 text-white;
-  }
+/* Root - Light Mode (Default) */
+:root {
+  /* Background & Surface Colors - Light Mode */
+  --color-background: 210 40% 96%;        /* Light cool gray-blue background */
+  --color-surface: 0 0% 100%;             /* Pure white surfaces */
+  --color-surface-secondary: 210 40% 98%; /* Slightly lighter surface variant */
+  --color-surface-tertiary: 210 40% 96%;  /* Even lighter variant */
+  --color-border: 210 14% 85%;            /* Subtle light border color */
+  --color-border-light: 210 16% 90%;      /* Very light border */
+  
+  /* Text Colors - Light Mode */
+  --color-text-primary: 210 11% 15%;      /* Dark blue-gray for primary text */
+  --color-text-secondary: 210 8% 40%;     /* Medium gray for secondary text */
+  --color-text-tertiary: 210 6% 65%;      /* Light gray for tertiary text */
+  --color-text-disabled: 210 5% 75%;      /* Disabled text color */
+  --color-text-inverse: 0 0% 100%;        /* Inverse text (white on color) */
+  
+  /* Medical/Healthcare Colors */
+  --color-medical-primary: 210 100% 50%;   /* Professional medical blue */
+  --color-medical-secondary: 197 100% 59%; /* Secondary medical blue */
+  --color-medical-success: 142 76% 36%;    /* Healthcare success green */
+  --color-medical-warning: 37 92% 50%;     /* Alert orange */
+  --color-medical-danger: 0 84% 60%;       /* Error red */
+  --color-medical-info: 193 100% 51%;      /* Info cyan */
+  
+  /* Semantic Colors */
+  --color-success: 142 76% 36%;
+  --color-warning: 37 92% 50%;
+  --color-danger: 0 84% 60%;
+  --color-info: 193 100% 51%;
+  
+  /* Shadows - Light Mode */
+  --shadow-xs: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+  --shadow-sm: 0 2px 4px 0 rgba(0, 0, 0, 0.06);
+  --shadow-md: 0 4px 12px 0 rgba(0, 0, 0, 0.08);
+  --shadow-lg: 0 8px 24px 0 rgba(0, 0, 0, 0.12);
+  --shadow-xl: 0 12px 32px 0 rgba(0, 0, 0, 0.15);
+  --shadow-2xl: 0 16px 48px 0 rgba(0, 0, 0, 0.18);
+  
+  /* Transitions */
+  --transition-fast: 150ms cubic-bezier(0.4, 0, 0.2, 1);
+  --transition-base: 200ms cubic-bezier(0.4, 0, 0.2, 1);
+  --transition-slow: 300ms cubic-bezier(0.4, 0, 0.2, 1);
+  
+  /* Focus Ring */
+  --focus-ring-color: rgb(2 132 199 / 0.5);
 }
 
-@layer components {
-  .glass {
-    @apply bg-surface/60 backdrop-blur-md border border-white/5;
-  }
-
-  .card-premium {
-    @apply bg-surface border border-border rounded-2xl shadow-glass hover:border-primary-500/30 transition-all duration-300;
-  }
-
-  .text-glow {
-    text-shadow: 0 0 8px rgba(14, 165, 233, 0.5);
-  }
+/* Dark Mode */
+.dark {
+  /* Background & Surface Colors - Dark Mode */
+  --color-background: 210 20% 5%;          /* Very dark blue-gray background */
+  --color-surface: 210 14% 11%;            /* Slightly lighter dark surface */
+  --color-surface-secondary: 210 12% 15%;  /* Even lighter dark variant */
+  --color-surface-tertiary: 210 10% 18%;   /* Tertiary dark surface */
+  --color-border: 210 8% 26%;              /* Subtle dark border color */
+  --color-border-light: 210 6% 32%;        /* Light dark border */
+  
+  /* Text Colors - Dark Mode */
+  --color-text-primary: 210 10% 95%;       /* Nearly white for primary text */
+  --color-text-secondary: 210 8% 75%;      /* Light gray for secondary text */
+  --color-text-tertiary: 210 6% 55%;       /* Medium gray for tertiary text */
+  --color-text-disabled: 210 4% 40%;       /* Disabled text color */
+  --color-text-inverse: 210 20% 5%;        /* Inverse text (dark on light) */
+  
+  /* Medical/Healthcare Colors - Dark Mode (Brightened for contrast) */
+  --color-medical-primary: 197 100% 60%;   /* Bright medical blue for dark mode */
+  --color-medical-secondary: 197 100% 65%; /* Secondary medical blue */
+  --color-medical-success: 142 80% 50%;    /* Brighter success green */
+  --color-medical-warning: 37 92% 58%;     /* Brighter alert orange */
+  --color-medical-danger: 0 84% 68%;       /* Brighter error red */
+  --color-medical-info: 193 100% 60%;      /* Brighter info cyan */
+  
+  /* Semantic Colors */
+  --color-success: 142 80% 50%;
+  --color-warning: 37 92% 58%;
+  --color-danger: 0 84% 68%;
+  --color-info: 193 100% 60%;
+  
+  /* Shadows - Dark Mode (Deeper) */
+  --shadow-xs: 0 1px 2px 0 rgba(0, 0, 0, 0.3);
+  --shadow-sm: 0 2px 4px 0 rgba(0, 0, 0, 0.35);
+  --shadow-md: 0 4px 12px 0 rgba(0, 0, 0, 0.4);
+  --shadow-lg: 0 8px 24px 0 rgba(0, 0, 0, 0.5);
+  --shadow-xl: 0 12px 32px 0 rgba(0, 0, 0, 0.6);
+  --shadow-2xl: 0 16px 48px 0 rgba(0, 0, 0, 0.65);
+  
+  /* Focus Ring */
+  --focus-ring-color: rgb(197 114 255 / 0.5);
 }
 
-/* Custom Scrollbar */
+/* ============================================
+   GLOBAL BASE STYLES
+   ============================================ */
+
+* {
+  @apply m-0 p-0 box-border;
+}
+
+html {
+  @apply scroll-smooth;
+  font-size: 16px;
+}
+
+body {
+  background-color: hsl(var(--color-background));
+  color: hsl(var(--color-text-primary));
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Helvetica Neue', Ubuntu, sans-serif;
+  font-weight: 400;
+  line-height: 1.5;
+  letter-spacing: 0.3px;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+/* ============================================
+   TYPOGRAPHY
+   ============================================ */
+
+h1 {
+  @apply text-4xl font-bold leading-tight;
+  color: hsl(var(--color-text-primary));
+  letter-spacing: -0.5px;
+  margin-bottom: 1rem;
+}
+
+h2 {
+  @apply text-3xl font-bold leading-snug;
+  color: hsl(var(--color-text-primary));
+  letter-spacing: -0.3px;
+  margin-bottom: 0.875rem;
+}
+
+h3 {
+  @apply text-2xl font-semibold leading-snug;
+  color: hsl(var(--color-text-primary));
+  margin-bottom: 0.75rem;
+}
+
+h4 {
+  @apply text-xl font-semibold;
+  color: hsl(var(--color-text-primary));
+  margin-bottom: 0.625rem;
+}
+
+h5 {
+  @apply text-lg font-semibold;
+  color: hsl(var(--color-text-secondary));
+  margin-bottom: 0.5rem;
+}
+
+h6 {
+  @apply text-base font-semibold uppercase tracking-widest;
+  color: hsl(var(--color-text-secondary));
+  margin-bottom: 0.5rem;
+}
+
+p {
+  @apply text-base leading-relaxed;
+  color: hsl(var(--color-text-secondary));
+  margin-bottom: 1rem;
+}
+
+small {
+  font-size: 0.875rem;
+  color: hsl(var(--color-text-tertiary));
+}
+
+/* Links */
+a {
+  color: hsl(var(--color-medical-primary));
+  text-decoration: none;
+  @apply transition-colors duration-200;
+}
+
+a:hover {
+  filter: brightness(0.9);
+  @apply underline;
+}
+
+a:focus-visible {
+  outline: 2px solid hsl(var(--color-medical-primary));
+  outline-offset: 2px;
+  border-radius: 2px;
+}
+
+/* ============================================
+   COMPONENTS
+   ============================================ */
+
+/* Card Component - Professional Healthcare Style */
+.card {
+  background-color: hsl(var(--color-surface));
+  border: 1px solid hsl(var(--color-border));
+  border-radius: 0.75rem;
+  padding: 1.5rem;
+  box-shadow: var(--shadow-md);
+  transition: all var(--transition-base);
+}
+
+.card:hover {
+  box-shadow: var(--shadow-lg);
+  border-color: hsl(var(--color-medical-primary) / 0.4);
+}
+
+.card-elevated {
+  box-shadow: var(--shadow-lg);
+}
+
+.card-compact {
+  padding: 1rem;
+}
+
+.card-spaced {
+  padding: 2rem;
+}
+
+/* Button Components */
+.btn {
+  @apply inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-lg font-medium transition-all duration-200 focus:outline-none cursor-pointer;
+  background-color: hsl(var(--color-surface));
+  border: 1px solid hsl(var(--color-border));
+  color: hsl(var(--color-text-primary));
+  box-shadow: var(--shadow-sm);
+}
+
+.btn:hover {
+  box-shadow: var(--shadow-md);
+  border-color: hsl(var(--color-medical-primary) / 0.3);
+}
+
+.btn:active {
+  transform: scale(0.98);
+}
+
+.btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.btn:focus-visible {
+  outline: 2px solid hsl(var(--color-medical-primary));
+  outline-offset: 1px;
+}
+
+/* Button Variants */
+.btn-primary {
+  background-color: hsl(var(--color-medical-primary));
+  color: hsl(var(--color-text-inverse));
+  border: none;
+}
+
+.btn-primary:hover {
+  filter: brightness(1.1);
+  box-shadow: var(--shadow-lg);
+}
+
+.btn-success {
+  background-color: hsl(var(--color-medical-success));
+  color: hsl(var(--color-text-inverse));
+  border: none;
+}
+
+.btn-success:hover {
+  filter: brightness(1.1);
+}
+
+.btn-danger {
+  background-color: hsl(var(--color-medical-danger));
+  color: hsl(var(--color-text-inverse));
+  border: none;
+}
+
+.btn-danger:hover {
+  filter: brightness(1.1);
+}
+
+.btn-warning {
+  background-color: hsl(var(--color-medical-warning));
+  color: hsl(var(--color-text-inverse));
+  border: none;
+}
+
+.btn-warning:hover {
+  filter: brightness(1.1);
+}
+
+.btn-info {
+  background-color: hsl(var(--color-medical-info));
+  color: hsl(var(--color-text-inverse));
+  border: none;
+}
+
+.btn-info:hover {
+  filter: brightness(1.1);
+}
+
+.btn-ghost {
+  background-color: transparent;
+  border: 1px solid hsl(var(--color-border));
+  box-shadow: none;
+}
+
+.btn-ghost:hover {
+  background-color: hsl(var(--color-surface-secondary));
+  box-shadow: var(--shadow-sm);
+}
+
+.btn-outline {
+  background-color: transparent;
+  border: 2px solid hsl(var(--color-medical-primary));
+  color: hsl(var(--color-medical-primary));
+}
+
+.btn-outline:hover {
+  background-color: hsl(var(--color-medical-primary) / 0.05);
+}
+
+.btn-sm {
+  @apply px-3 py-1.5 text-sm;
+}
+
+.btn-lg {
+  @apply px-6 py-3 text-lg;
+}
+
+/* ============================================
+   FORM ELEMENTS
+   ============================================ */
+
+.form-group {
+  @apply mb-6;
+}
+
+label {
+  @apply block mb-2 text-sm font-medium;
+  color: hsl(var(--color-text-primary));
+}
+
+.label-required::after {
+  content: " *";
+  color: hsl(var(--color-medical-danger));
+}
+
+/* Input Fields */
+input[type='text'],
+input[type='email'],
+input[type='password'],
+input[type='number'],
+input[type='date'],
+input[type='time'],
+input[type='tel'],
+input[type='url'],
+input[type='search'],
+textarea,
+select {
+  @apply w-full px-4 py-2.5 rounded-lg border text-base font-normal transition-all duration-200;
+  background-color: hsl(var(--color-surface));
+  border-color: hsl(var(--color-border));
+  color: hsl(var(--color-text-primary));
+  font-family: inherit;
+}
+
+input[type='text']::placeholder,
+input[type='email']::placeholder,
+input[type='password']::placeholder,
+input[type='number']::placeholder,
+input[type='date']::placeholder,
+input[type='time']::placeholder,
+input[type='tel']::placeholder,
+input[type='url']::placeholder,
+input[type='search']::placeholder,
+textarea::placeholder {
+  color: hsl(var(--color-text-tertiary));
+}
+
+input[type='text']:focus,
+input[type='email']:focus,
+input[type='password']:focus,
+input[type='number']:focus,
+input[type='date']:focus,
+input[type='time']:focus,
+input[type='tel']:focus,
+input[type='url']:focus,
+input[type='search']:focus,
+textarea:focus,
+select:focus {
+  outline: none;
+  border-color: hsl(var(--color-medical-primary));
+  box-shadow: 0 0 0 3px hsl(var(--color-medical-primary) / 0.1);
+  background-color: hsl(var(--color-surface));
+}
+
+input[type='text']:disabled,
+input[type='email']:disabled,
+input[type='password']:disabled,
+input[type='number']:disabled,
+textarea:disabled,
+select:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+textarea {
+  resize: vertical;
+  min-height: 120px;
+  font-family: 'Monaco', 'Menlo', 'Courier New', monospace;
+  font-size: 0.875rem;
+  line-height: 1.5;
+}
+
+select {
+  cursor: pointer;
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%23475569' d='M6 9L1 4h10z'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 1rem center;
+  padding-right: 2.5rem;
+}
+
+/* Checkbox & Radio */
+input[type='checkbox'],
+input[type='radio'] {
+  @apply w-5 h-5 rounded cursor-pointer;
+  accent-color: hsl(var(--color-medical-primary));
+}
+
+/* ============================================
+   BADGES
+   ============================================ */
+
+.badge {
+  @apply inline-flex items-center gap-1 px-3 py-1 rounded-full text-sm font-medium;
+  background-color: hsl(var(--color-surface-secondary));
+  color: hsl(var(--color-text-secondary));
+}
+
+.badge-primary {
+  background-color: hsl(var(--color-medical-primary) / 0.15);
+  color: hsl(var(--color-medical-primary));
+}
+
+.badge-success {
+  background-color: hsl(var(--color-medical-success) / 0.15);
+  color: hsl(var(--color-medical-success));
+}
+
+.badge-danger {
+  background-color: hsl(var(--color-medical-danger) / 0.15);
+  color: hsl(var(--color-medical-danger));
+}
+
+.badge-warning {
+  background-color: hsl(var(--color-medical-warning) / 0.15);
+  color: hsl(var(--color-medical-warning));
+}
+
+.badge-info {
+  background-color: hsl(var(--color-medical-info) / 0.15);
+  color: hsl(var(--color-medical-info));
+}
+
+.badge-outline {
+  background-color: transparent;
+  border: 1px solid currentColor;
+  padding: 0.375rem 0.75rem;
+}
+
+/* ============================================
+   TABLES
+   ============================================ */
+
+table {
+  @apply w-full border-collapse;
+}
+
+thead {
+  background-color: hsl(var(--color-surface-secondary));
+  border-bottom: 2px solid hsl(var(--color-border));
+}
+
+th {
+  @apply px-4 py-3 text-left text-sm font-semibold;
+  color: hsl(var(--color-text-primary));
+}
+
+td {
+  @apply px-4 py-3 border-b;
+  border-color: hsl(var(--color-border-light));
+  color: hsl(var(--color-text-secondary));
+  font-size: 0.875rem;
+}
+
+tbody tr:hover {
+  background-color: hsl(var(--color-surface-secondary));
+}
+
+tbody tr:last-child td {
+  border-bottom: none;
+}
+
+/* ============================================
+   SCROLLBAR STYLING
+   ============================================ */
+
 ::-webkit-scrollbar {
-  width: 6px;
-  height: 6px;
+  width: 8px;
+  height: 8px;
 }
 
 ::-webkit-scrollbar-track {
-  @apply bg-transparent;
+  background: hsl(var(--color-surface));
 }
 
 ::-webkit-scrollbar-thumb {
-  @apply bg-slate-800 rounded-full hover:bg-slate-700 transition-colors;
+  background: hsl(var(--color-border));
+  border-radius: 4px;
 }
 
-/* Animations */
-@keyframes pulse-slow {
-  0%, 100% { opacity: 0.8; }
-  50% { opacity: 0.4; }
+::-webkit-scrollbar-thumb:hover {
+  background: hsl(var(--color-medical-primary) / 0.6);
 }
 
-.animate-pulse-slow {
-  animation: pulse-slow 4s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+/* ============================================
+   ANIMATIONS
+   ============================================ */
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
 }
 
-@keyframes shimmer {
-  0% { transform: translateX(-100%); }
-  100% { transform: translateX(100%); }
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
-.animate-shimmer {
-  animation: shimmer 2s ease-in-out infinite;
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
-/* Smooth page transitions */
-* {
-  scroll-behavior: smooth;
+@keyframes slideLeft {
+  from {
+    opacity: 0;
+    transform: translateX(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
 }
 
-/* Focus styles for a11y */
+@keyframes pulse {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.5;
+  }
+}
+
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.animate-fade-in {
+  animation: fadeIn 0.3s ease-in-out;
+}
+
+.animate-slide-up {
+  animation: slideUp 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.animate-slide-down {
+  animation: slideDown 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.animate-slide-left {
+  animation: slideLeft 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.animate-pulse-soft {
+  animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+.animate-spin-slow {
+  animation: spin 2s linear infinite;
+}
+
+/* ============================================
+   UTILITY CLASSES
+   ============================================ */
+
+.text-primary {
+  color: hsl(var(--color-text-primary));
+}
+
+.text-secondary {
+  color: hsl(var(--color-text-secondary));
+}
+
+.text-tertiary {
+  color: hsl(var(--color-text-tertiary));
+}
+
+.text-medical {
+  color: hsl(var(--color-medical-primary));
+}
+
+.text-success {
+  color: hsl(var(--color-medical-success));
+}
+
+.text-danger {
+  color: hsl(var(--color-medical-danger));
+}
+
+.text-warning {
+  color: hsl(var(--color-medical-warning));
+}
+
+.text-info {
+  color: hsl(var(--color-medical-info));
+}
+
+.bg-medical {
+  background-color: hsl(var(--color-medical-primary));
+}
+
+.bg-success {
+  background-color: hsl(var(--color-medical-success));
+}
+
+.bg-danger {
+  background-color: hsl(var(--color-medical-danger));
+}
+
+.bg-warning {
+  background-color: hsl(var(--color-medical-warning));
+}
+
+.bg-info {
+  background-color: hsl(var(--color-medical-info));
+}
+
+.border-medical {
+  border-color: hsl(var(--color-medical-primary));
+}
+
+.border-success {
+  border-color: hsl(var(--color-medical-success));
+}
+
+.border-danger {
+  border-color: hsl(var(--color-medical-danger));
+}
+
+.border-warning {
+  border-color: hsl(var(--color-medical-warning));
+}
+
+/* Shadow Utilities */
+.shadow-sm {
+  box-shadow: var(--shadow-sm);
+}
+
+.shadow-md {
+  box-shadow: var(--shadow-md);
+}
+
+.shadow-lg {
+  box-shadow: var(--shadow-lg);
+}
+
+.shadow-xl {
+  box-shadow: var(--shadow-xl);
+}
+
+/* ============================================
+   ACCESSIBILITY & FOCUS STATES
+   ============================================ */
+
 :focus-visible {
-  @apply outline-2 outline-offset-2 outline-primary-500 rounded;
+  outline: 2px solid hsl(var(--color-medical-primary));
+  outline-offset: 2px;
+}
+
+button:focus-visible,
+a:focus-visible,
+input:focus-visible,
+select:focus-visible,
+textarea:focus-visible {
+  outline: 2px solid hsl(var(--color-medical-primary));
+  outline-offset: 2px;
+}
+
+/* Skip Link for Accessibility */
+.skip-to-main {
+  @apply absolute left-0 top-0 -translate-y-full focus:translate-y-0 bg-medical text-white px-4 py-2 z-50;
+}
+
+/* ============================================
+   PRINT STYLES
+   ============================================ */
+
+@media print {
+  body {
+    background-color: white;
+    color: black;
+  }
+
+  .no-print {
+    display: none !important;
+  }
+
+  a {
+    text-decoration: underline;
+  }
+
+  button,
+  .btn {
+    border: 1px solid black;
+  }
+}
+
+/* ============================================
+   RESPONSIVE UTILITIES
+   ============================================ */
+
+@media (max-width: 768px) {
+  h1 {
+    @apply text-2xl;
+  }
+
+  h2 {
+    @apply text-xl;
+  }
+
+  h3 {
+    @apply text-lg;
+  }
+
+  .btn {
+    @apply w-full;
+  }
 }
