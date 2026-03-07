@@ -1,25 +1,41 @@
 import React, { useState } from 'react';
-import { Outlet, useLocation, Link } from 'react-router-dom';
+import { Outlet, useLocation, Link, useNavigate } from 'react-router-dom';
 import {
   Brain, Home, Upload, BarChart3, FileText, Microscope, Users,
-  Settings, Bell, User, Search, Menu, X, Zap, Shield, Moon, Sun
+  Settings, Bell, User, Search, Menu, X, Zap, Shield, Moon, Sun, LogOut
 } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { useTheme } from '../context/ThemeContext';
+import { useAuth } from '../context/AuthContext';
 
 function Layout() {
   const location = useLocation();
+  const navigate = useNavigate();
   const [sidebarOpen, setSidebarOpen] = useState(true);
   const { theme, toggleTheme } = useTheme();
+  const { user, logout } = useAuth();
 
   const navigation = [
-    { icon: Home, label: 'Dashboard', href: '/' },
+    { icon: Home, label: 'Dashboard', href: '/dashboard' },
     { icon: Upload, label: 'Upload Scan', href: '/upload' },
     { icon: BarChart3, label: 'Patient Reports', href: '/patient-reports' },
+    { icon: User, label: 'Profile', href: '/profile' },
     { icon: Settings, label: 'Settings', href: '/settings' },
   ];
 
   const isActive = (path) => location.pathname === path;
+
+  const handleLogout = () => {
+    logout();
+    navigate('/login');
+  };
+
+  const initials = (user?.name || 'U')
+    .split(' ')
+    .map((w) => w[0])
+    .join('')
+    .slice(0, 2)
+    .toUpperCase();
 
   return (
     <div className="min-h-screen bg-background text-primary transition-colors duration-300">
@@ -27,9 +43,8 @@ function Layout() {
       <motion.aside
         initial={{ x: -300 }}
         animate={{ x: 0 }}
-        className={`fixed left-0 top-0 h-screen bg-surface border-r border-border transition-all duration-300 z-40 ${
-          sidebarOpen ? 'w-64' : 'w-20'
-        }`}
+        className={`fixed left-0 top-0 h-screen bg-surface border-r border-border transition-all duration-300 z-40 ${sidebarOpen ? 'w-64' : 'w-20'
+          }`}
       >
         <div className="p-6 flex items-center justify-between">
           <div className="flex items-center gap-3">
@@ -57,11 +72,10 @@ function Layout() {
             <Link
               key={item.href}
               to={item.href}
-              className={`flex items-center gap-4 px-4 py-3 rounded-xl transition-all ${
-                isActive(item.href)
+              className={`flex items-center gap-4 px-4 py-3 rounded-xl transition-all no-underline hover:no-underline ${isActive(item.href)
                   ? 'bg-primary-600 text-white'
                   : 'text-secondary hover:bg-surface-secondary'
-              }`}
+                }`}
               title={!sidebarOpen ? item.label : ''}
             >
               <item.icon size={20} />
@@ -70,17 +84,26 @@ function Layout() {
           ))}
         </nav>
 
-        {/* Bottom Info */}
-        {sidebarOpen && (
-          <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-surface to-transparent p-6 space-y-4">
+        {/* Bottom – Logout */}
+        <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-surface to-transparent p-6 space-y-3">
+          <button
+            onClick={handleLogout}
+            className={`flex items-center gap-4 w-full px-4 py-3 rounded-xl text-red-500 hover:bg-red-500/10 transition-all ${sidebarOpen ? '' : 'justify-center'
+              }`}
+            title="Logout"
+          >
+            <LogOut size={20} />
+            {sidebarOpen && <span className="text-sm font-medium">Logout</span>}
+          </button>
+          {sidebarOpen && (
             <div className="text-center text-[9px] text-secondary font-bold">
               <div className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-success/10 dark:bg-success/10 border border-success/20 dark:border-success/20 rounded-full">
                 <div className="w-1.5 h-1.5 rounded-full bg-success animate-pulse" />
                 <span className="uppercase tracking-widest">Online</span>
               </div>
             </div>
-          </div>
-        )}
+          )}
+        </div>
       </motion.aside>
 
       {/* Top Bar */}
@@ -99,7 +122,7 @@ function Layout() {
 
           {/* Right Controls */}
           <div className="flex items-center gap-4 ml-auto">
-            <button 
+            <button
               onClick={toggleTheme}
               className="p-2.5 hover:bg-surface-secondary rounded-xl transition-colors"
               title={`Switch to ${theme === 'dark' ? 'light' : 'dark'} mode`}
@@ -113,18 +136,18 @@ function Layout() {
             <button className="p-2.5 hover:bg-surface-secondary rounded-xl transition-colors">
               <Bell size={18} className="text-secondary" />
             </button>
-            <button className="p-2.5 hover:bg-surface-secondary rounded-xl transition-colors">
+            <Link to="/settings" className="p-2.5 hover:bg-surface-secondary rounded-xl transition-colors no-underline">
               <Settings size={18} className="text-secondary" />
-            </button>
-            <div className="pl-4 border-l border-border flex items-center gap-3 transition-colors duration-300">
+            </Link>
+            <Link to="/profile" className="pl-4 border-l border-border flex items-center gap-3 transition-colors duration-300 no-underline hover:no-underline">
               <div className="hidden sm:block text-right">
-                <div className="text-xs font-bold text-primary">Dr. Sarah Chen</div>
-                <div className="text-[9px] text-secondary">Radiologist</div>
+                <div className="text-xs font-bold text-primary">{user?.name || 'User'}</div>
+                <div className="text-[9px] text-secondary capitalize">{user?.role || 'Radiologist'}</div>
               </div>
-              <div className="w-10 h-10 bg-gradient-to-br from-primary-500 to-accent rounded-full flex items-center justify-center text-white font-bold">
-                SC
+              <div className="w-10 h-10 bg-gradient-to-br from-primary-500 to-accent rounded-full flex items-center justify-center text-white font-bold text-sm">
+                {initials}
               </div>
-            </div>
+            </Link>
           </div>
         </div>
       </header>

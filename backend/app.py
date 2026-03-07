@@ -3,6 +3,10 @@ CogniRad++ Flask API
 Serves the radiology report generation model via REST API
 """
 
+# Load .env before anything else
+from dotenv import load_dotenv
+load_dotenv()
+
 import os
 import io
 import numpy as np
@@ -27,6 +31,10 @@ app = Flask(__name__)
 # Configure CORS
 allowed_origins = os.environ.get('ALLOWED_ORIGINS', '*').split(',')
 CORS(app, origins=allowed_origins)  # Enable CORS for frontend
+
+# Register Auth Blueprint
+from auth_routes import auth_bp
+app.register_blueprint(auth_bp)
 
 # Configuration
 DEVICE = 'cuda' if (MODEL_AVAILABLE and torch.cuda.is_available()) else 'cpu'
