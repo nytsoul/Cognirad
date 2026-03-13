@@ -6,6 +6,8 @@ import {
 } from 'lucide-react';
 import { motion } from 'framer-motion';
 
+const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5001';
+
 function UploadScan() {
   const navigate = useNavigate();
   const [file, setFile] = useState(null);
@@ -14,6 +16,7 @@ function UploadScan() {
   const [gender, setGender] = useState('');
   const [indication, setIndication] = useState('');
   const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState(null);
 
   const handleDrag = (e) => {
     e.preventDefault();
