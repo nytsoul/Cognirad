@@ -45,10 +45,38 @@ function UploadScan() {
 
   const handleAnalyze = async () => {
     if (!file) return;
+    setError(null);
     setIsLoading(true);
-    // Simulate upload and analysis
-    await new Promise(r => setTimeout(r, 2000));
-    navigate(`/analysis/CASE${Date.now()}`);
+
+    try {
+      const formData = new FormData();
+      formData.append('image', file);
+      formData.append('indication', indication);
+      // Optional: tweak this threshold in the UI if needed
+      formData.append('confidence_threshold', '0.7');
+
+      const res = await fetch(`${API_URL}/api/predict`, {
+        method: 'POST',
+        body: formData,
+      });
+
+      if (!res.ok) {
+        const errorBody = await res.json().catch(() => ({}));
+        throw new Error(errorBody.error || 'Analysis failed');
+      }
+
+      const report = await res.json();
+      const imageUrl = URL.createObjectURL(file);
+
+      navigate(`/analysis/CASE${Date.now()}`, {
+        state: { report, imageUrl },
+      });
+    } catch (err) {
+      console.error('Analysis failed', err);
+      setError(err?.message || 'Analysis failed');
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (
@@ -222,6 +250,13 @@ function UploadScan() {
                 </>
               )}
             </motion.button>
+
+            {error && (
+              <div className="mt-3 text-sm text-red-300 bg-red-500/10 border border-red-500/20 rounded-xl px-4 py-3">
+                <p className="font-semibold">Analysis failed</p>
+                <p className="text-xs">{error}</p>
+              </div>
+            )}
 
             <div className="text-[10px] text-slate-600 font-medium bg-white/[0.02] border border-white/5 rounded-lg p-3">
               <p className="font-bold text-slate-500 mb-1">Upload Guidelines:</p>
