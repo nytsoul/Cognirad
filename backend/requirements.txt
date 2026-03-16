@@ -1,0 +1,59 @@
+# CogniRad++: Knowledge-Grounded Cognitive Radiology Assistant
+# Core Dependencies
+
+# Deep Learning Framework
+torch>=2.0.0
+torchvision>=0.15.0
+pytorch-lightning>=2.0.0
+
+# Vision & Medical Imaging
+timm>=0.9.0
+opencv-python>=4.8.0
+Pillow>=10.0.0
+pydicom>=2.4.0
+nibabel>=5.1.0
+scikit-image>=0.21.0
+
+# NLP & Text Processing
+transformers>=4.30.0
+tokenizers>=0.13.0
+sentencepiece>=0.1.99
+nltk>=3.8.1
+
+# Medical NLP & Evaluation
+radgraph>=0.1.0
+pycocoevalcap>=1.2
+sacrebleu>=2.3.1
+
+# Data Processing
+pandas>=2.0.0
+numpy>=1.24.0
+h5py>=3.9.0
+pyarrow>=12.0.0
+
+# Visualization
+matplotlib>=3.7.0
+seaborn>=0.12.0
+plotly>=5.14.0
+gradio>=3.35.0
+
+# Medical Knowledge
+scispacy>=0.5.0
+https://s3-us-west-2.amazonaws.com/ai2-s2-scispacy/releases/v0.5.1/en_core_sci_md-0.5.1.tar.gz
+
+# Utilities
+tqdm>=4.65.0
+pyyaml>=6.0
+wandb>=0.15.0
+tensorboard>=2.13.0
+omegaconf>=2.3.0
+
+# Testing & Quality
+pytest>=7.3.0
+black>=23.3.0
+flake8>=6.0.0
+
+# Metrics & Evaluation
+scikit-learn>=1.3.0
+scipy>=1.11.0
+torchmetrics>=1.0.0

@@ -606,6 +606,3 @@ This project is licensed under the MIT License - see [LICENSE](LICENSE) file.
 **⚠️ Disclaimer:** This is a research prototype for academic purposes only. Not approved for clinical use. Always consult qualified healthcare professionals for medical diagnoses.
 
 **🏥 Clinical Validation Required:** Before deployment in healthcare settings, comprehensive clinical validation studies must be conducted according to regulatory guidelines (FDA 510(k), CE marking, etc.).
-#   C o g n i r a d  
- #   C o g n i r a d  
- 
