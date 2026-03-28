@@ -70,14 +70,14 @@ export default function Landing() {
         initial={{ y: -60, opacity: 0 }}
         animate={{ y: 0, opacity: 1 }}
         transition={{ duration: 0.5 }}
-        className="fixed top-0 inset-x-0 z-50 bg-surface/70 backdrop-blur-xl border-b border-border"
+        className="fixed top-0 inset-x-0 z-50 bg-surface/80 backdrop-blur-xl border-b border-border"
       >
         <div className="max-w-7xl mx-auto flex items-center justify-between px-6 h-16">
           <Link to="/" className="flex items-center gap-3 no-underline hover:no-underline">
             <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-primary-500 to-primary-700 flex items-center justify-center text-white">
               <Brain size={20} />
             </div>
-            <span className="text-lg font-bold text-primary tracking-tight">CogniRad++</span>
+            <span className="text-lg font-bold text-primary tracking-tight">CogniRad</span>
           </Link>
           <div className="flex items-center gap-3">
             <Link
