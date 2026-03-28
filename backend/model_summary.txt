@@ -1,0 +1,5 @@
+Loading model from d:\Programming\Project\Medical\backend\outputs\pneumonia_model.keras...
+Model loaded successfully!
+
+--- Model Summary ---
+Error loading model: 'charmap' codec can't encode characters in position 23-42: character maps to <undefined>
